@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,6 +44,20 @@ function AltairComponent() {
   const { client, setConfig, setModel } = useLiveAPIContext();
 
   useEffect(() => {
+    // Revised to use 12-hour format with AM/PM
+    const currentDate = new Date().toLocaleString('en-MY', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true, // This is crucial for 12-hour format
+      timeZoneName: 'short',
+      timeZone: 'Asia/Kuala_Lumpur'
+    });
+
     setModel("models/gemini-2.0-flash-exp");
     setConfig({
       responseModalities: [Modality.AUDIO],
@@ -53,12 +67,20 @@ function AltairComponent() {
       systemInstruction: {
         parts: [
           {
-            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
+            text: `You are a helpful AI assistant named Maia. Your AI model was developed and trained by maia.aio. Follow these guidelines:
+1. Maintain context of the conversation history provided
+2. Respond concisely in the user's language
+3. For current info, use provided web results with sources
+4. For weather queries, provide detailed forecasts without sources
+5. Always use Malaysia Time (MYT, UTC+8) and current date and time: ${currentDate} for time-sensitive info
+6. For images, describe key elements and context
+7. Maintain professional yet friendly tone
+8. For news requests, use the provided news data
+9. Verify the current date and time when relevant using web search if uncertain`,
           },
         ],
       },
       tools: [
-        // there is a free-tier quota for search
         { googleSearch: {} },
         { functionDeclarations: [declaration] },
       ],
@@ -77,8 +99,6 @@ function AltairComponent() {
         const str = (fc.args as any).json_graph;
         setJSONString(str);
       }
-      // send data for the response of your tool call
-      // in this case Im just saying it was successful
       if (toolCall.functionCalls.length) {
         setTimeout(
           () =>
