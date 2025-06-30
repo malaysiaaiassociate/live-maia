@@ -41,12 +41,35 @@ export function useWebcam(): UseMediaStreamResult {
   }, [stream]);
 
   const start = async () => {
-    const mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-    });
-    setStream(mediaStream);
-    setIsStreaming(true);
-    return mediaStream;
+    // Try back camera first on mobile devices
+    let constraints = {
+      video: {
+        facingMode: { ideal: "environment" }, // "environment" = back camera, "user" = front camera
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    };
+
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      setStream(mediaStream);
+      setIsStreaming(true);
+      return mediaStream;
+    } catch (error) {
+      // Fallback to front camera if back camera fails
+      console.warn("Back camera not available, falling back to front camera:", error);
+      constraints = {
+        video: {
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      setStream(mediaStream);
+      setIsStreaming(true);
+      return mediaStream;
+    }
   };
 
   const stop = () => {
