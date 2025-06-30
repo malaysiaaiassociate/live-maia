@@ -26,13 +26,12 @@ import "./side-panel.scss";
 
 const filterOptions = [
   { value: "conversations", label: "Conversations" },
-  { value: "tools", label: "Tool Use" },
   { value: "none", label: "All" },
 ];
 
 export default function SidePanel() {
   const { connected, client } = useLiveAPIContext();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const loggerRef = useRef<HTMLDivElement>(null);
   const loggerLastHeightRef = useRef<number>(-1);
   const { log, logs } = useLoggerStore();
@@ -76,7 +75,7 @@ export default function SidePanel() {
   return (
     <div className={`side-panel ${open ? "open" : ""}`}>
       <header className="top">
-        <h2>MAIA Console</h2>
+        <h2>Console</h2>
         {open ? (
           <button className="opener" onClick={() => setOpen(false)}>
             <RiSidebarFoldLine color="#b4b8bb" />
