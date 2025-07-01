@@ -26,34 +26,48 @@ export const audioContext: (
   const didInteract = new Promise((res) => {
     window.addEventListener("pointerdown", res, { once: true });
     window.addEventListener("keydown", res, { once: true });
+    window.addEventListener("touchstart", res, { once: true });
+    window.addEventListener("click", res, { once: true });
   });
 
   return async (options?: GetAudioContextOptions) => {
-    try {
-      const a = new Audio();
-      a.src =
-        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-      await a.play();
-      if (options?.id && map.has(options.id)) {
-        const ctx = map.get(options.id);
-        if (ctx) {
-          return ctx;
+    // Check if we already have a context for this ID
+    if (options?.id && map.has(options.id)) {
+      const ctx = map.get(options.id);
+      if (ctx) {
+        // Resume context if it's suspended (common on iOS)
+        if (ctx.state === 'suspended') {
+          await ctx.resume();
         }
+        return ctx;
       }
+    }
+
+    try {
+      // Try to create audio context immediately
       const ctx = new AudioContext(options);
+      
+      // iOS/Safari often starts in suspended state
+      if (ctx.state === 'suspended') {
+        await didInteract;
+        await ctx.resume();
+      }
+      
       if (options?.id) {
         map.set(options.id, ctx);
       }
       return ctx;
     } catch (e) {
+      // Fallback: wait for user interaction
       await didInteract;
-      if (options?.id && map.has(options.id)) {
-        const ctx = map.get(options.id);
-        if (ctx) {
-          return ctx;
-        }
-      }
+      
       const ctx = new AudioContext(options);
+      
+      // Ensure context is resumed after user interaction
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      
       if (options?.id) {
         map.set(options.id, ctx);
       }
