@@ -73,10 +73,8 @@ function AltairComponent() {
 3. For current info, use provided web results with sources
 4. For weather queries, provide detailed forecasts without sources
 5. Always use Malaysia Time (MYT, UTC+8) and current date and time: ${currentDate} for time-sensitive info
-6. For images, describe key elements and context
-7. Maintain professional yet friendly tone
-8. For news requests, use the provided news data
-9. Verify the current date and time when relevant using web search if uncertain`,
+6. Maintain professional yet friendly tone
+7. For news requests, use the provided news data`,
           },
         ],
       },
