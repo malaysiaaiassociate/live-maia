@@ -143,9 +143,18 @@ export const AnimatedBackground: React.FC = () => {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="animated-background"
-    />
+    <div className="animated-background-container">
+      <canvas
+        ref={canvasRef}
+        className="animated-background"
+      />
+      <div className="background-text">
+        <span className="letter-white">M</span>
+        <span className="letter-blue">A</span>
+        <span className="letter-blue">i</span>
+        <span className="letter-white">A</span>
+        <span className="letter-white"> Live!</span>
+      </div>
+    </div>
   );
 };
