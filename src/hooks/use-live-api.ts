@@ -53,8 +53,13 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
             setVolume(ev.data.volume);
           })
           .then(() => {
-            // Successfully added worklet
+            console.log("Audio worklet initialized successfully");
+          })
+          .catch((error) => {
+            console.warn("Failed to add worklet:", error);
           });
+      }).catch((error) => {
+        console.error("Failed to initialize audio context:", error);
       });
     }
   }, [audioStreamerRef]);
@@ -99,8 +104,45 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
     if (!config) {
       throw new Error("config has not been set");
     }
-    client.disconnect();
-    await client.connect(model, config);
+
+    // Ensure audio context is ready before connecting (critical for iOS)
+    try {
+      const audioCtx = await audioContext({ id: "audio-out" });
+
+      // Wait a bit for iOS to properly initialize
+      if (audioCtx.state === 'suspended') {
+        console.log("Resuming suspended audio context...");
+        await audioCtx.resume();
+
+        // Give iOS a moment to properly resume
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        if (audioCtx.state === 'suspended') {
+          console.warn("Audio context still suspended after resume attempt");
+        }
+      }
+
+      // Ensure audio streamer is properly initialized
+      if (!audioStreamerRef.current) {
+        audioStreamerRef.current = new AudioStreamer(audioCtx);
+        await audioStreamerRef.current.addWorklet<any>("vumeter-out", VolMeterWorket, (ev: any) => {
+          setVolume(ev.data.volume);
+        });
+      }
+
+      console.log("Audio context state:", audioCtx.state);
+    } catch (error) {
+      console.error("Failed to initialize audio for connection:", error);
+      throw new Error("Audio initialization failed. Please try again.");
+    }
+
+    try {
+      client.disconnect();
+      await client.connect(model, config);
+    } catch (error) {
+      console.error("Failed to connect to live API:", error);
+      throw error;
+    }
   }, [client, config, model]);
 
   const disconnect = useCallback(async () => {
