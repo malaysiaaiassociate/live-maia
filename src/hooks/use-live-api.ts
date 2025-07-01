@@ -99,17 +99,6 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
     if (!config) {
       throw new Error("config has not been set");
     }
-    
-    // Ensure audio context is ready before connecting (important for iOS)
-    try {
-      const audioCtx = await audioContext({ id: "audio-out" });
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
-    } catch (error) {
-      console.warn("Audio context not ready:", error);
-    }
-    
     client.disconnect();
     await client.connect(model, config);
   }, [client, config, model]);
