@@ -20,6 +20,7 @@ import { LiveAPIProvider } from "./contexts/LiveAPIContext";
 
 import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
+import { AnimatedBackground } from "./components/animated-background/AnimatedBackground";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -41,6 +42,7 @@ function App() {
 
   return (
     <div className="App">
+      <AnimatedBackground />
       <LiveAPIProvider options={apiOptions}>
         <div className="streaming-console">
           <main>
