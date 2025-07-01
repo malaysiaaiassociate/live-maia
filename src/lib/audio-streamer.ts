@@ -237,26 +237,8 @@ export class AudioStreamer {
 
   async resume() {
     if (this.context.state === "suspended") {
-      try {
-        await this.context.resume();
-        console.log("Audio context resumed successfully");
-      } catch (error) {
-        console.error("Failed to resume audio context:", error);
-        throw error;
-      }
+      await this.context.resume();
     }
-    
-    // Wait for context to be running (important for iOS)
-    let attempts = 0;
-    while (this.context.state !== 'running' && attempts < 10) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-      attempts++;
-    }
-    
-    if (this.context.state !== 'running') {
-      console.warn("Audio context not in running state after resume attempts");
-    }
-    
     this.isStreamComplete = false;
     this.scheduledTime = this.context.currentTime + this.initialBufferTime;
     this.gainNode.gain.setValueAtTime(1, this.context.currentTime);
