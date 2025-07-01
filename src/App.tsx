@@ -17,7 +17,7 @@
 import { useRef, useState } from "react";
 import "./App.scss";
 import { LiveAPIProvider } from "./contexts/LiveAPIContext";
-import SidePanel from "./components/side-panel/SidePanel";
+
 import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
 import cn from "classnames";
@@ -43,7 +43,6 @@ function App() {
     <div className="App">
       <LiveAPIProvider options={apiOptions}>
         <div className="streaming-console">
-          <SidePanel />
           <main>
             <div className="main-app-area">
               {/* APP goes here */}
