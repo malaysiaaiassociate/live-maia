@@ -237,7 +237,13 @@ export class AudioStreamer {
 
   async resume() {
     if (this.context.state === "suspended") {
-      await this.context.resume();
+      try {
+        await this.context.resume();
+        console.log("Audio context resumed successfully");
+      } catch (error) {
+        console.error("Failed to resume audio context:", error);
+        throw error;
+      }
     }
     this.isStreamComplete = false;
     this.scheduledTime = this.context.currentTime + this.initialBufferTime;
