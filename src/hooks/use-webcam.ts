@@ -42,7 +42,7 @@ export function useWebcam(): UseMediaStreamResult {
 
   const start = async () => {
     // Try back camera first on mobile devices
-    let constraints: MediaStreamConstraints = {
+    let constraints = {
       video: {
         facingMode: { ideal: "environment" }, // "environment" = back camera, "user" = front camera
         width: { ideal: 1280 },
@@ -60,7 +60,7 @@ export function useWebcam(): UseMediaStreamResult {
       console.warn("Back camera not available, falling back to front camera:", error);
       constraints = {
         video: {
-          facingMode: { ideal: "user" }, // Consistent structure with object format
+          facingMode: { ideal: "user" },
           width: { ideal: 1280 },
           height: { ideal: 720 }
         }
