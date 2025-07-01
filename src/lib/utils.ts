@@ -23,37 +23,86 @@ const map: Map<string, AudioContext> = new Map();
 export const audioContext: (
   options?: GetAudioContextOptions
 ) => Promise<AudioContext> = (() => {
-  const didInteract = new Promise((res) => {
-    window.addEventListener("pointerdown", res, { once: true });
-    window.addEventListener("keydown", res, { once: true });
+  // Detect iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  let userInteracted = false;
+  const didInteract = new Promise<void>((res) => {
+    const handleInteraction = () => {
+      userInteracted = true;
+      res();
+    };
+
+    window.addEventListener("pointerdown", handleInteraction, { once: true });
+    window.addEventListener("keydown", handleInteraction, { once: true });
+    window.addEventListener("touchstart", handleInteraction, { once: true });
+    window.addEventListener("click", handleInteraction, { once: true });
+    window.addEventListener("touchend", handleInteraction, { once: true });
   });
 
   return async (options?: GetAudioContextOptions) => {
+    // Check if we already have a context for this ID
+    if (options?.id && map.has(options.id)) {
+      const ctx = map.get(options.id);
+      if (ctx) {
+        // For iOS, ensure we have user interaction before resuming
+        if (ctx.state === 'suspended') {
+          if (isIOS && !userInteracted) {
+            await didInteract;
+          }
+          try {
+            await ctx.resume();
+          } catch (error) {
+            console.warn('Failed to resume audio context:', error);
+          }
+        }
+        return ctx;
+      }
+    }
+
+    // For iOS, always wait for user interaction before creating audio context
+    if (isIOS && !userInteracted) {
+      await didInteract;
+    }
+
     try {
-      const a = new Audio();
-      a.src =
-        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-      await a.play();
-      if (options?.id && map.has(options.id)) {
-        const ctx = map.get(options.id);
-        if (ctx) {
-          return ctx;
+      const ctx = new AudioContext(options);
+
+      // Handle suspended state
+      if (ctx.state === 'suspended') {
+        if (!userInteracted) {
+          await didInteract;
+        }
+        try {
+          await ctx.resume();
+        } catch (error) {
+          console.warn('Failed to resume audio context:', error);
         }
       }
-      const ctx = new AudioContext(options);
+
       if (options?.id) {
         map.set(options.id, ctx);
       }
       return ctx;
     } catch (e) {
-      await didInteract;
-      if (options?.id && map.has(options.id)) {
-        const ctx = map.get(options.id);
-        if (ctx) {
-          return ctx;
+      console.error('Failed to create audio context:', e);
+      // Fallback: ensure user interaction
+      if (!userInteracted) {
+        await didInteract;
+      }
+
+      const ctx = new AudioContext(options);
+
+      // Ensure context is resumed after user interaction
+      if (ctx.state === 'suspended') {
+        try {
+          await ctx.resume();
+        } catch (error) {
+          console.warn('Failed to resume audio context in fallback:', error);
         }
       }
-      const ctx = new AudioContext(options);
+
       if (options?.id) {
         map.set(options.id, ctx);
       }
