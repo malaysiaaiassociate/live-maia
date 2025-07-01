@@ -1,0 +1,15 @@
+
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(135deg, 
+    rgba(23, 23, 23, 1) 0%, 
+    rgba(34, 39, 41, 1) 50%, 
+    rgba(23, 23, 23, 1) 100%
+  );
+}
