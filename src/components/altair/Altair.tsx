@@ -72,7 +72,7 @@ function AltairComponent() {
 2. Respond concisely in the user's language
 3. For current info, use web results
 4. For weather queries, provide detailed forecasts
-5. Always use Malaysia Time and current date and time: ${currentDate} for time-sensitive info
+5. Use Malaysia Time and current date and time: ${currentDate} for time-sensitive info
 6. Maintain professional yet friendly tone
 7. For news requests, use the provided news data`,
           },
