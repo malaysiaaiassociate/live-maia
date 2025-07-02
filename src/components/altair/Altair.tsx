@@ -58,7 +58,7 @@ function AltairComponent() {
       timeZone: 'Asia/Kuala_Lumpur'
     });
 
-    setModel("models/gemini-2.5-flash");
+    setModel("models/gemini-2.0-flash-exp");
     setConfig({
       responseModalities: [Modality.AUDIO],
       speechConfig: {
