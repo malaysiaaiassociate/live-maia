@@ -32,9 +32,12 @@ export const getCurrentLocation = (): Promise<LocationData> => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // If accuracy is worse than 100m, you might want to inform the user
-        if (position.coords.accuracy > 100) {
-          console.warn(`Location accuracy is ${position.coords.accuracy}m - may be inaccurate`);
+        // Log accuracy information for debugging
+        console.log(`Location obtained with ${position.coords.accuracy}m accuracy`);
+        if (position.coords.accuracy > 1000) {
+          console.warn(`Location accuracy is very poor (${position.coords.accuracy}m) - likely using IP geolocation`);
+        } else if (position.coords.accuracy > 100) {
+          console.warn(`Location accuracy is moderate (${position.coords.accuracy}m) - may be using Wi-Fi positioning`);
         }
         
         resolve({
