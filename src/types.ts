@@ -42,3 +42,11 @@ export type ClientContentLog = {
   turns: Part[];
   turnComplete: boolean;
 };
+
+export type LiveServerToolCall = {
+  functionCalls?: Array<{
+    name: string;
+    id: string;
+    args: any;
+  }>;
+};
