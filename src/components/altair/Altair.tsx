@@ -16,12 +16,8 @@
 import { useEffect, useRef, useState, memo } from "react";
 import vegaEmbed from "vega-embed";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
-import {
-  FunctionDeclaration,
-  LiveServerToolCall,
-  Modality,
-  Type,
-} from "@google/genai";
+import { Modality, LiveServerToolCall, FunctionDeclaration, Type } from "@google/genai";
+import { getCurrentLocation, LocationData, LocationError } from "../../lib/location";
 
 const declaration: FunctionDeclaration = {
   name: "render_altair",
@@ -42,6 +38,22 @@ const declaration: FunctionDeclaration = {
 function AltairComponent() {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
+  const [location, setLocation] = useState<LocationData | null>(null);
+  const [locationError, setLocationError] = useState<LocationError | null>(null);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const locationData = await getCurrentLocation();
+        setLocation(locationData);
+      } catch (error: any) {
+        setLocationError(error);
+        console.error("Error getting location:", error);
+      }
+    };
+
+    fetchLocation();
+  }, []);
 
   useEffect(() => {
     // Revised to use 12-hour format with AM/PM
@@ -73,6 +85,13 @@ function AltairComponent() {
 3. Maintain professional yet friendly tone
 5. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info`,
           },
+          location ? {
+            text: `The user's current location is: Latitude ${location.latitude}, Longitude ${location.longitude}.`
+          } : locationError ? {
+            text: `The application was unable to retrieve the user's location: ${locationError.message}`
+          } : {
+            text: `The application is attempting to retrieve the user's location.`
+          }
         ],
       },
       tools: [
@@ -80,7 +99,7 @@ function AltairComponent() {
         { functionDeclarations: [declaration] },
       ],
     });
-  }, [setConfig, setModel]);
+  }, [setConfig, setModel, location, locationError]);
 
   useEffect(() => {
     const onToolCall = (toolCall: LiveServerToolCall) => {
