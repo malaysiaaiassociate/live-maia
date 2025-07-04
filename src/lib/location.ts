@@ -26,12 +26,17 @@ export const getCurrentLocation = (): Promise<LocationData> => {
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 300000 // 5 minutes
+      timeout: 15000, // Increased timeout for better GPS lock
+      maximumAge: 60000 // Reduced cache time for fresher location
     };
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        // If accuracy is worse than 100m, you might want to inform the user
+        if (position.coords.accuracy > 100) {
+          console.warn(`Location accuracy is ${position.coords.accuracy}m - may be inaccurate`);
+        }
+        
         resolve({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
