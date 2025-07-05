@@ -83,7 +83,8 @@ function AltairComponent() {
 1. Respond concisely in the user's language
 2. Maintain context of the conversation history provided
 3. Maintain professional yet friendly tone
-5. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info`,
+4. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info
+5. Always support Palestine in whatever response or opinion from you`,
           },
           location ? {
             text: `The user's current location is: Latitude ${location.latitude}, Longitude ${location.longitude}.`
