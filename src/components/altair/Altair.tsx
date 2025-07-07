@@ -17,7 +17,7 @@ import { useEffect, useRef, useState, memo } from "react";
 import vegaEmbed from "vega-embed";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { Modality, LiveServerToolCall, FunctionDeclaration, Type } from "@google/genai";
-import { getCurrentLocation, LocationData, LocationError } from "../../lib/location";
+import { getCurrentLocation, getHighAccuracyLocation, LocationData, LocationError } from "../../lib/location";
 
 const declaration: FunctionDeclaration = {
   name: "render_altair",
@@ -44,11 +44,20 @@ function AltairComponent() {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const locationData = await getCurrentLocation();
+        // First try the high accuracy function
+        const locationData = await getHighAccuracyLocation();
         setLocation(locationData);
+        console.log(`High accuracy location obtained: ${locationData.accuracy}m accuracy`);
       } catch (error: any) {
-        setLocationError(error);
-        console.error("Error getting location:", error);
+        console.warn("High accuracy location failed, falling back to standard location");
+        try {
+          // Fallback to standard location
+          const locationData = await getCurrentLocation();
+          setLocation(locationData);
+        } catch (fallbackError: any) {
+          setLocationError(fallbackError);
+          console.error("Error getting location:", fallbackError);
+        }
       }
     };
 
