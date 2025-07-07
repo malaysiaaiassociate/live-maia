@@ -26,7 +26,7 @@ export const getCurrentLocation = (): Promise<LocationData> => {
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 15000, // Increased timeout for better GPS lock
+      timeout: 20000, // Increased timeout for better GPS lock
       maximumAge: 60000 // Reduced cache time for fresher location
     };
 
@@ -39,7 +39,7 @@ export const getCurrentLocation = (): Promise<LocationData> => {
         } else if (position.coords.accuracy > 100) {
           console.warn(`Location accuracy is moderate (${position.coords.accuracy}m) - may be using Wi-Fi positioning`);
         }
-        
+
         resolve({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -83,10 +83,10 @@ export const watchLocation = (
   }
 
   const options = {
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 300000 // 5 minutes
-  };
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 60000 // 1 minute for real-time traffic updates
+    };
 
   return navigator.geolocation.watchPosition(
     (position) => {
