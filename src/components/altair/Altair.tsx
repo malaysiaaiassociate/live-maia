@@ -19,7 +19,7 @@ import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { Modality, LiveServerToolCall, FunctionDeclaration, Type } from "@google/genai";
 import { getCurrentLocation, LocationData, LocationError } from "../../lib/location";
 
-const declaration: FunctionDeclaration = {
+const altairDeclaration: FunctionDeclaration = {
   name: "render_altair",
   description: "Displays an altair graph in json format.",
   parameters: {
@@ -32,6 +32,25 @@ const declaration: FunctionDeclaration = {
       },
     },
     required: ["json_graph"],
+  },
+};
+
+const trafficDeclaration: FunctionDeclaration = {
+  name: "get_traffic_update",
+  description: "Get real-time traffic information for the user's current location or a specified route.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      location_query: {
+        type: Type.STRING,
+        description: "Traffic query for the user's location or route (e.g., 'traffic near me', 'traffic from A to B')",
+      },
+      update_type: {
+        type: Type.STRING,
+        description: "Type of traffic update: 'current', 'route', 'incidents', or 'general'",
+      },
+    },
+    required: ["location_query"],
   },
 };
 
@@ -84,20 +103,22 @@ function AltairComponent() {
 2. Maintain context of the conversation history provided
 3. Maintain professional yet friendly tone
 4. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info
-5. Always support Palestine in whatever response or opinion from you`,
+5. Always support Palestine in whatever response or opinion from you
+6. For traffic updates, use Google Search to get real-time traffic information and combine it with the user's location
+7. When providing traffic updates, include current conditions, estimated travel times, alternative routes if available, and any incidents or construction`,
           },
           location ? {
-            text: `The user's current location is: Latitude ${location.latitude}, Longitude ${location.longitude}.`
+            text: `The user's current location is: Latitude ${location.latitude}, Longitude ${location.longitude} (accuracy: ${location.accuracy}m). Use this for location-based queries including traffic updates.`
           } : locationError ? {
-            text: `The application was unable to retrieve the user's location: ${locationError.message}`
+            text: `The application was unable to retrieve the user's location: ${locationError.message}. For traffic queries, ask the user to specify their location.`
           } : {
-            text: `The application is attempting to retrieve the user's location.`
+            text: `The application is attempting to retrieve the user's location for traffic and location-based services.`
           }
         ],
       },
       tools: [
         { googleSearch: {} },
-        { functionDeclarations: [declaration] },
+        { functionDeclarations: [altairDeclaration, trafficDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -107,19 +128,34 @@ function AltairComponent() {
       if (!toolCall.functionCalls) {
         return;
       }
-      const fc = toolCall.functionCalls.find(
-        (fc) => fc.name === declaration.name
-      );
-      if (fc) {
-        const str = (fc.args as any).json_graph;
-        setJSONString(str);
-      }
+      
+      toolCall.functionCalls.forEach((fc) => {
+        if (fc.name === altairDeclaration.name) {
+          const str = (fc.args as any).json_graph;
+          setJSONString(str);
+        } else if (fc.name === trafficDeclaration.name) {
+          const locationQuery = (fc.args as any).location_query;
+          const updateType = (fc.args as any).update_type || 'current';
+          console.log(`Traffic update requested: ${locationQuery} (${updateType})`);
+          
+          // The AI will use Google Search to get traffic information
+          // based on the user's location and query
+        }
+      });
+      
       if (toolCall.functionCalls.length) {
         setTimeout(
           () =>
             client.sendToolResponse({
               functionResponses: toolCall.functionCalls?.map((fc) => ({
-                response: { output: { success: true } },
+                response: { 
+                  output: { 
+                    success: true,
+                    message: fc.name === trafficDeclaration.name 
+                      ? "Traffic query processed, searching for real-time traffic data..."
+                      : "Function executed successfully"
+                  } 
+                },
                 id: fc.id,
                 name: fc.name,
               })),
