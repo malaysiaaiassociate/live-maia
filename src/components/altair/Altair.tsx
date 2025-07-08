@@ -21,6 +21,7 @@ import { getCurrentLocation, LocationData, LocationError } from "../../lib/locat
 
 interface AltairProps {
   onShowWeather: (location: string) => void;
+  onShowTraffic: (location: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -73,7 +74,7 @@ const weatherDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowWeather }: AltairProps) {
+function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -158,8 +159,13 @@ function AltairComponent({ onShowWeather }: AltairProps) {
           const updateType = (fc.args as any).update_type || 'current';
           console.log(`Traffic update requested: ${locationQuery} (${updateType})`);
 
-          // The AI will use Google Search to get traffic information
-          // based on the user's location and query
+          // Extract location from query or use current location
+          const location = locationQuery.includes('near me') || locationQuery.includes('my location') 
+            ? 'Current Location' 
+            : locationQuery.replace(/traffic\s+(from|to|in|on|at)\s+/i, '').trim();
+          
+          // Trigger the traffic widget
+          onShowTraffic(location);
         } else if (fc.name === weatherDeclaration.name) {
           const location = (fc.args as any).location;
           console.log(`Weather requested for: ${location}`);
@@ -194,7 +200,7 @@ function AltairComponent({ onShowWeather }: AltairProps) {
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather]);
+  }, [client, onShowWeather, onShowTraffic]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
