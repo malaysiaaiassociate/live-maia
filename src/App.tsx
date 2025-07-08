@@ -22,6 +22,7 @@ import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
 import { AnimatedBackground } from "./components/animated-background/AnimatedBackground";
 import { WeatherWidget } from "./components/weather-widget/WeatherWidget";
+import { TrafficWidget } from "./components/traffic-widget/TrafficWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -43,6 +44,9 @@ function App() {
   // weather widget state
   const [showWeatherWidget, setShowWeatherWidget] = useState<boolean>(false);
   const [weatherLocation, setWeatherLocation] = useState<string>("");
+  // traffic widget state
+  const [showTrafficWidget, setShowTrafficWidget] = useState<boolean>(false);
+  const [trafficLocation, setTrafficLocation] = useState<string>("");
 
   return (
     <div className="App">
@@ -56,6 +60,10 @@ function App() {
                 onShowWeather={(location: string) => {
                   setWeatherLocation(location);
                   setShowWeatherWidget(true);
+                }}
+                onShowTraffic={(location: string) => {
+                  setTrafficLocation(location);
+                  setShowTrafficWidget(true);
                 }}
               />
               <video
@@ -83,6 +91,13 @@ function App() {
           <WeatherWidget 
             location={weatherLocation}
             onClose={() => setShowWeatherWidget(false)}
+          />
+        )}
+        
+        {showTrafficWidget && (
+          <TrafficWidget 
+            location={trafficLocation}
+            onClose={() => setShowTrafficWidget(false)}
           />
         )}
       </LiveAPIProvider>
