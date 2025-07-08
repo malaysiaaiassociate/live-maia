@@ -1,0 +1,242 @@
+
+.traffic-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.traffic-widget {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 20px;
+  padding: 0;
+  width: 90vw;
+  max-width: 800px;
+  height: 80vh;
+  max-height: 600px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+
+  &.loading, &.error {
+    height: 200px;
+    max-height: 200px;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.traffic-header {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+
+  .traffic-title {
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .traffic-location {
+      font-size: 14px;
+      color: #b0b0b0;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .last-updated {
+        font-size: 12px;
+        color: #888;
+      }
+    }
+  }
+
+  .close-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.traffic-content {
+  flex: 1;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.traffic-map-container {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .traffic-map {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 12px;
+  }
+}
+
+.traffic-fallback {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+
+  .traffic-icon {
+    font-size: 48px;
+    opacity: 0.8;
+  }
+
+  p {
+    font-size: 16px;
+    color: #b0b0b0;
+    margin: 0;
+  }
+
+  .traffic-legend {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+
+      .color-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+
+        &.green {
+          background: #4CAF50;
+        }
+
+        &.yellow {
+          background: #FFC107;
+        }
+
+        &.red {
+          background: #F44336;
+        }
+
+        &.dark-red {
+          background: #B71C1C;
+        }
+      }
+    }
+  }
+}
+
+.traffic-info {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .info-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+    }
+  }
+}
+
+.loading-spinner {
+  padding: 40px;
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 16px;
+}
+
+.error-message {
+  padding: 40px;
+  text-align: center;
+  color: #ff6b6b;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .traffic-widget {
+    width: 95vw;
+    height: 85vh;
+  }
+
+  .traffic-header {
+    padding: 16px 20px;
+
+    .traffic-title h2 {
+      font-size: 20px;
+    }
+  }
+
+  .traffic-content {
+    padding: 16px;
+  }
+
+  .traffic-fallback .traffic-legend {
+    grid-template-columns: 1fr;
+  }
+
+  .traffic-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
