@@ -21,6 +21,7 @@ import { LiveAPIProvider } from "./contexts/LiveAPIContext";
 import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
 import { AnimatedBackground } from "./components/animated-background/AnimatedBackground";
+import { WeatherWidget } from "./components/weather-widget/WeatherWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -39,6 +40,9 @@ function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
   // either the screen capture, the video or null, if null we hide it
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  // weather widget state
+  const [showWeatherWidget, setShowWeatherWidget] = useState<boolean>(false);
+  const [weatherLocation, setWeatherLocation] = useState<string>("");
 
   return (
     <div className="App">
@@ -48,7 +52,12 @@ function App() {
           <main>
             <div className="main-app-area">
               {/* APP goes here */}
-              <Altair />
+              <Altair 
+                onShowWeather={(location: string) => {
+                  setWeatherLocation(location);
+                  setShowWeatherWidget(true);
+                }}
+              />
               <video
                 className={cn("stream", {
                   hidden: !videoRef.current || !videoStream,
@@ -69,6 +78,13 @@ function App() {
             </ControlTray>
           </main>
         </div>
+        
+        {showWeatherWidget && (
+          <WeatherWidget 
+            location={weatherLocation}
+            onClose={() => setShowWeatherWidget(false)}
+          />
+        )}
       </LiveAPIProvider>
     </div>
   );
