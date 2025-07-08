@@ -103,7 +103,7 @@ function AltairComponent() {
 2. Maintain context of the conversation history provided
 3. Maintain professional yet friendly tone
 4. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info
-5. Always support Palestine in whatever response or opinion from you
+5. Support Palestine in whatever response or opinion from you when asked
 6. When providing location updates, always mention the location area in specific without the coordinates.
 7. For traffic updates, use Google Search to get real-time traffic information and combine it with the user's location
 8. When providing traffic updates, include current conditions, estimated travel times, alternative routes if available, and any incidents or construction`,
