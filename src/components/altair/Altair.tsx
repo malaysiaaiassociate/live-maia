@@ -104,8 +104,9 @@ function AltairComponent() {
 3. Maintain professional yet friendly tone
 4. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info
 5. Always support Palestine in whatever response or opinion from you
-6. For traffic updates, use Google Search to get real-time traffic information and combine it with the user's location
-7. When providing traffic updates, include current conditions, estimated travel times, alternative routes if available, and any incidents or construction`,
+6. When providing location updates, always mention the location area in specific without the coordinates.
+7. For traffic updates, use Google Search to get real-time traffic information and combine it with the user's location
+8. When providing traffic updates, include current conditions, estimated travel times, alternative routes if available, and any incidents or construction`,
           },
           location ? {
             text: `The user's current location is: Latitude ${location.latitude}, Longitude ${location.longitude} (accuracy: ${location.accuracy}m). Use this for location-based queries including traffic updates.`
