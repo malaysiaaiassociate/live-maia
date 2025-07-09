@@ -23,6 +23,7 @@ import ControlTray from "./components/control-tray/ControlTray";
 import { AnimatedBackground } from "./components/animated-background/AnimatedBackground";
 import { WeatherWidget } from "./components/weather-widget/WeatherWidget";
 import { TrafficWidget } from "./components/traffic-widget/TrafficWidget";
+import { MapWidget } from "./components/map-widget/MapWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -47,6 +48,9 @@ function App() {
   // traffic widget state
   const [showTrafficWidget, setShowTrafficWidget] = useState<boolean>(false);
   const [trafficLocation, setTrafficLocation] = useState<string>("");
+  // map widget state
+  const [showMapWidget, setShowMapWidget] = useState<boolean>(false);
+  const [mapLocation, setMapLocation] = useState<string>("");
 
   return (
     <div className="App">
@@ -64,6 +68,10 @@ function App() {
                 onShowTraffic={(location: string) => {
                   setTrafficLocation(location);
                   setShowTrafficWidget(true);
+                }}
+                onShowMap={(location: string) => {
+                  setMapLocation(location);
+                  setShowMapWidget(true);
                 }}
               />
               <video
@@ -98,6 +106,13 @@ function App() {
           <TrafficWidget 
             location={trafficLocation}
             onClose={() => setShowTrafficWidget(false)}
+          />
+        )}
+        
+        {showMapWidget && (
+          <MapWidget 
+            location={mapLocation}
+            onClose={() => setShowMapWidget(false)}
           />
         )}
       </LiveAPIProvider>
