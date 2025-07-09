@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import './weather-widget.scss';
 
@@ -101,12 +100,12 @@ const getWeatherEmoji = (iconUrl: string): string => {
     '227': '❄️', // Blowing snow
     '230': '🌨️'  // Blizzard
   };
-  
+
   // Extract condition code from icon URL
   const match = iconUrl.match(/\/(\d+)\.png/);
   const code = match ? match[1] : '';
   const timeOfDay = iconUrl.includes('/day/') ? 'day' : 'night';
-  
+
   return conditionMap[code] || conditionMap[timeOfDay] || '🌤️';
 };
 
@@ -116,28 +115,28 @@ const fetchWeatherData = async (location: string): Promise<WeatherData> => {
     const response = await fetch(
       `${BASE_URL}/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=8&aqi=no&alerts=no`
     );
-    
+
     if (!response.ok) {
       throw new Error(`WeatherAPI error: ${response.status}`);
     }
-    
+
     const data: WeatherAPIForecastResponse = await response.json();
-    
+
     // Process hourly data (next 8 hours)
     const now = new Date();
     const currentHour = now.getHours();
     const todayForecast = data.forecast.forecastday[0];
     const tomorrowForecast = data.forecast.forecastday[1] || todayForecast;
-    
+
     let hourlyData: Array<{ time: string; temperature: number; precipitation: number; windSpeed: number }> = [];
-    
+
     // Get remaining hours from today
     const todayHours = todayForecast.hour.slice(currentHour);
     // Get hours from tomorrow if needed
     const tomorrowHours = tomorrowForecast.hour;
-    
+
     const allHours = [...todayHours, ...tomorrowHours];
-    
+
     hourlyData = allHours.slice(0, 8).map(hour => {
       const time = new Date(hour.time);
       return {
@@ -150,7 +149,7 @@ const fetchWeatherData = async (location: string): Promise<WeatherData> => {
         windSpeed: hour.wind_kph || 0
       };
     });
-    
+
     // Process daily data
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const dailyData = data.forecast.forecastday.map(day => {
@@ -163,7 +162,7 @@ const fetchWeatherData = async (location: string): Promise<WeatherData> => {
         low: Math.round(day.day.mintemp_c)
       };
     });
-    
+
     return {
       location: `${data.location.name}, ${data.location.country}`,
       current: {
@@ -195,17 +194,17 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ location, onClose 
   useEffect(() => {
     const loadWeatherData = async () => {
       if (!location) return;
-      
+
       setLoading(true);
       setError(null);
-      
+
       try {
         const data = await fetchWeatherData(location);
         setWeatherData(data);
       } catch (err) {
         console.error('Failed to fetch weather data:', err);
         setError('Failed to load weather data. Please try again.');
-        
+
         // Fallback to a simple mock for demo purposes
         setWeatherData({
           location: location,
