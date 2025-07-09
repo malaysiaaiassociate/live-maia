@@ -127,7 +127,8 @@ function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
 6. When providing location updates, always mention the location area in specific without the coordinates.
 7. For traffic updates, use Google Search to get real-time traffic information and combine it with the user's location
 8. When providing traffic updates, include current conditions, estimated travel times, alternative routes if available, and any incidents or construction
-9. When speaking numbers, dates, or measurements, pronounce them according to the user's language conventions`,
+9. When showing weather widget, always provide a brief voice explanation about the current weather conditions, temperature, and any notable weather patterns
+10. When speaking numbers, dates, or measurements, pronounce them according to the user's language conventions`,
           },
           location ? {
             text: `The user's current location is: Latitude ${location.latitude}, Longitude ${location.longitude} (accuracy: ${location.accuracy}m). Use this for location-based queries including traffic updates.`
@@ -186,6 +187,8 @@ function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
                     success: true,
                     message: fc.name === trafficDeclaration.name 
                       ? "Traffic query processed, searching for real-time traffic data..."
+                      : fc.name === weatherDeclaration.name
+                      ? `Weather widget displayed for ${(fc.args as any).location}. Let me provide you with a brief weather explanation based on the current conditions.`
                       : "Function executed successfully"
                   } 
                 },
