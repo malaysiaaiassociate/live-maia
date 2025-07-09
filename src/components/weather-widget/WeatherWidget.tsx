@@ -282,7 +282,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ location, onClose 
           <div className="weather-title">
             <h2>Weather</h2>
             <div className="weather-day">
-              Tuesday<br />
+              {new Date().toLocaleDateString('en-US', { weekday: 'long' })}<br />
               <span className="weather-condition">{weatherData.current.condition}</span>
             </div>
           </div>
