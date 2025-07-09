@@ -22,6 +22,7 @@ import { getCurrentLocation, LocationData, LocationError } from "../../lib/locat
 interface AltairProps {
   onShowWeather: (location: string) => void;
   onShowTraffic: (location: string) => void;
+  onShowMap: (location: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -74,7 +75,22 @@ const weatherDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
+const mapDeclaration: FunctionDeclaration = {
+  name: "show_map_widget",
+  description: "Display a map widget for a specific location when user asks about a place",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      location: {
+        type: Type.STRING,
+        description: "The location to show on the map (e.g., 'Eiffel Tower', 'Tokyo', 'Central Park')"
+      }
+    },
+    required: ["location"]
+  }
+};
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -141,7 +157,7 @@ function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
       },
       tools: [
         { googleSearch: {} },
-        { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration] },
+        { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -165,15 +181,20 @@ function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
           const location = locationQuery.includes('near me') || locationQuery.includes('my location') 
             ? 'Current Location' 
             : locationQuery.replace(/traffic\s+(from|to|in|on|at)\s+/i, '').trim();
-          
+
           // Trigger the traffic widget
           onShowTraffic(location);
         } else if (fc.name === weatherDeclaration.name) {
           const location = (fc.args as any).location;
           console.log(`Weather requested for: ${location}`);
-          
+
           // Trigger the weather widget
           onShowWeather(location);
+        } else if (fc.name === mapDeclaration.name) {
+          const location = (fc.args as any).location;
+          console.log(`Map requested for: ${location}`);
+
+          onShowMap(location);
         }
       });
 
@@ -189,6 +210,8 @@ function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
                       ? "Traffic query processed, searching for real-time traffic data..."
                       : fc.name === weatherDeclaration.name
                       ? `Weather widget displayed for ${(fc.args as any).location}. Let me provide you with a brief weather explanation based on the current conditions.`
+                      : fc.name === mapDeclaration.name
+                      ? `Map widget displayed for ${(fc.args as any).location}.`
                       : "Function executed successfully"
                   } 
                 },
@@ -204,7 +227,7 @@ function AltairComponent({ onShowWeather, onShowTraffic }: AltairProps) {
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
