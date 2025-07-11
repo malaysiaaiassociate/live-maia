@@ -24,6 +24,7 @@ import { AnimatedBackground } from "./components/animated-background/AnimatedBac
 import { WeatherWidget } from "./components/weather-widget/WeatherWidget";
 import { TrafficWidget } from "./components/traffic-widget/TrafficWidget";
 import { MapWidget } from "./components/map-widget/MapWidget";
+import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -51,6 +52,9 @@ function App() {
   // map widget state
   const [showMapWidget, setShowMapWidget] = useState<boolean>(false);
   const [mapLocation, setMapLocation] = useState<string>("");
+  // youtube widget state
+  const [showYouTubeWidget, setShowYouTubeWidget] = useState<boolean>(false);
+  const [youTubeQuery, setYouTubeQuery] = useState<string>("");
 
   return (
     <div className="App">
@@ -72,6 +76,10 @@ function App() {
                 onShowMap={(location: string) => {
                   setMapLocation(location);
                   setShowMapWidget(true);
+                }}
+                onShowYouTube={(query: string) => {
+                  setYouTubeQuery(query);
+                  setShowYouTubeWidget(true);
                 }}
               />
               <video
@@ -113,6 +121,13 @@ function App() {
           <MapWidget 
             location={mapLocation}
             onClose={() => setShowMapWidget(false)}
+          />
+        )}
+        
+        {showYouTubeWidget && (
+          <YouTubeWidget 
+            searchQuery={youTubeQuery}
+            onClose={() => setShowYouTubeWidget(false)}
           />
         )}
       </LiveAPIProvider>
