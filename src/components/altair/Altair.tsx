@@ -23,6 +23,7 @@ interface AltairProps {
   onShowWeather: (location: string) => void;
   onShowTraffic: (location: string) => void;
   onShowMap: (location: string) => void;
+  onShowYouTube: (query: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -90,7 +91,22 @@ const mapDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap }: AltairProps) {
+const youtubeDeclaration: FunctionDeclaration = {
+  name: "search_youtube_video",
+  description: "Search and display YouTube videos when user asks to search for videos on YouTube",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      query: {
+        type: Type.STRING,
+        description: "The search query for YouTube videos (e.g., 'cat videos', 'how to cook pasta', 'music videos')"
+      }
+    },
+    required: ["query"]
+  }
+};
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -157,7 +173,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap }: AltairProp
       },
       tools: [
         { googleSearch: {} },
-        { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration] },
+        { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration] },
       ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -195,6 +211,11 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap }: AltairProp
           console.log(`Map requested for: ${location}`);
 
           onShowMap(location);
+        } else if (fc.name === youtubeDeclaration.name) {
+          const query = (fc.args as any).query;
+          console.log(`YouTube search requested for: ${query}`);
+
+          onShowYouTube(query);
         }
       });
 
@@ -212,6 +233,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap }: AltairProp
                       ? `Weather widget displayed for ${(fc.args as any).location}. Let me provide you with a brief weather explanation based on the current conditions.`
                       : fc.name === mapDeclaration.name
                       ? `Map widget displayed for ${(fc.args as any).location}.`
+                      : fc.name === youtubeDeclaration.name
+                      ? `YouTube search widget displayed for "${(fc.args as any).query}".`
                       : "Function executed successfully"
                   } 
                 },
@@ -227,7 +250,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap }: AltairProp
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
