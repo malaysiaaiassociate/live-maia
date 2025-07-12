@@ -323,6 +323,42 @@ const malaysianChannels: IPTVChannel[] = [
     category: 'Musics',
     language: 'English',
     description: 'Malaysian private television channel offering variety musics shows and entertainment programs.'
+  },
+  {
+    id: 'cartoonnetwork',
+    name: 'Cartoon Network TV',
+    url: 'https://www.tvmalaysia.live/channel/cartoon-network',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Cartoon-Network-HD-cover.jpg',
+    category: 'Cartoon',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety cartoon shows and entertainment programs.'
+  },
+  {
+    id: 'nickelodeon',
+    name: 'Nickelodeon TV',
+    url: 'https://www.tvmalaysia.live/channel/nickelodeon',
+    logo: 'https://deadline.com/wp-content/uploads/2023/02/nickelodeon.jpg',
+    category: 'Cartoon',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety cartoon shows and entertainment programs.'
+  },
+  {
+    id: 'nickjr',
+    name: 'Nickelodeon Jr TV',
+    url: 'https://www.tvmalaysia.live/channel/nick-jr',
+    logo: 'https://www.yougame.at/upload/logossonstig/nick_jr.jpg',
+    category: 'Cartoon',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety cartoon shows and entertainment programs.'
+  },
+  {
+    id: 'dreamworks',
+    name: 'Dreamworks TV',
+    url: 'https://www.tvmalaysia.live/channel/dreamworks',
+    logo: 'https://deadline.com/wp-content/uploads/2019/02/dreamworks-e1669399670922.jpg',
+    category: 'Cartoon',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety cartoon shows and entertainment programs.'
   }
 ];
 
