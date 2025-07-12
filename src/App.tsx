@@ -25,6 +25,7 @@ import { WeatherWidget } from "./components/weather-widget/WeatherWidget";
 import { TrafficWidget } from "./components/traffic-widget/TrafficWidget";
 import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
+import { SpotifyWidget } from "./components/spotify-widget/SpotifyWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -55,6 +56,9 @@ function App() {
   // youtube widget state
   const [showYouTubeWidget, setShowYouTubeWidget] = useState<boolean>(false);
   const [youTubeQuery, setYouTubeQuery] = useState<string>("");
+  // spotify widget state
+  const [showSpotifyWidget, setShowSpotifyWidget] = useState<boolean>(false);
+  const [spotifyQuery, setSpotifyQuery] = useState<string>("");
 
   return (
     <div className="App">
@@ -80,6 +84,10 @@ function App() {
                 onShowYouTube={(query: string) => {
                   setYouTubeQuery(query);
                   setShowYouTubeWidget(true);
+                }}
+                onShowSpotify={(query: string) => {
+                  setSpotifyQuery(query);
+                  setShowSpotifyWidget(true);
                 }}
               />
               <video
@@ -128,6 +136,13 @@ function App() {
           <YouTubeWidget 
             searchQuery={youTubeQuery}
             onClose={() => setShowYouTubeWidget(false)}
+          />
+        )}
+        
+        {showSpotifyWidget && (
+          <SpotifyWidget 
+            searchQuery={spotifyQuery}
+            onClose={() => setShowSpotifyWidget(false)}
           />
         )}
       </LiveAPIProvider>
