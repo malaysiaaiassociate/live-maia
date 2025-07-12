@@ -64,13 +64,22 @@ const malaysianChannels: IPTVChannel[] = [
     description: 'Malaysian television channel offering variety shows, dramas, and entertainment programs.'
   },
   {
-    id: 'astroawani',
-    name: 'Astro Awani TV',
-    url: 'https://www.tvmalaysia.live/channel/awani',
-    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Astro-Awani-Live-Streaming-HD-Now.webp',
-    category: 'News',
+    id: 'tvalhijrah',
+    name: 'TV Al Hijrah',
+    url: 'https://www.tvmalaysia.live/channel/alhijrah',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Al-Hijrah-TV-Live-Streaming-HD-Now.webp',
+    category: 'Islamic',
     language: 'Malay',
-    description: 'Malaysian private television channel offering news programs.'
+    description: 'Malaysian television channel offering variety Islamic shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'didiktv',
+    name: 'Didik TV',
+    url: 'https://www.tvmalaysia.live/channel/didiktvlive',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Didik-TV-Live-Streaming-HD-Now.webp',
+    category: 'Education',
+    language: 'Malay / English',
+    description: 'Television channel focusing on educational entertainment content.'
   },
   {
     id: 'astroria',
@@ -89,6 +98,33 @@ const malaysianChannels: IPTVChannel[] = [
     category: 'Entertainment',
     language: 'Malay',
     description: 'Malaysian private television channel offering variety shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'astrooasis',
+    name: 'Astro Oasis TV',
+    url: 'https://www.tvmalaysia.live/channel/oasis',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Oasis-Live-Streaming-Malaysia-HD-Free.webp',
+    category: 'Islamic',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Islamic shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'astroawani',
+    name: 'Astro Awani TV',
+    url: 'https://www.tvmalaysia.live/channel/awani',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Astro-Awani-Live-Streaming-HD-Now.webp',
+    category: 'News',
+    language: 'Malay',
+    description: 'Malaysian private television channel offering news programs.'
+  },
+  {
+    id: 'astroceria',
+    name: 'Astro Ceria TV',
+    url: 'https://www.tvmalaysia.live/channel/ceria',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Astro-Ceria-Live-Streaming-Free-HD.webp',
+    category: 'Entertainment',
+    language: 'Malay',
+    description: 'Malaysian private television channel offering variety kids shows and entertainment programs.'
   },
   {
     id: 'astrocitra',
@@ -112,6 +148,42 @@ const malaysianChannels: IPTVChannel[] = [
     id: 'astroarena',
     name: 'Astro Arena 2 TV',
     url: 'https://www.tvmalaysia.live/channel/arena-2',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+  },
+  {
+    id: 'astroarenabola',
+    name: 'Astro Arena Bola TV',
+    url: 'https://www.tvmalaysia.live/channel/astro-arena-bola',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-2-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+  },
+  {
+    id: 'astroarenabola2',
+    name: 'Astro Arena Bola 2 TV',
+    url: 'https://www.tvmalaysia.live/channel/astro-arena-bola-2',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Bola-2-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+  },
+  {
+    id: 'astrosportsuhd',
+    name: 'Astro Sports UHD TV',
+    url: 'https://www.tvmalaysia.live/channel/sportsuhd',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+  },
+  {
+    id: 'astrograndstand',
+    name: 'Astro Grand Stand TV',
+    url: 'https://www.tvmalaysia.live/channel/grandstand',
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'Malay / English',
