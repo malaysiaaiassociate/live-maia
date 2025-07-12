@@ -26,6 +26,7 @@ import { TrafficWidget } from "./components/traffic-widget/TrafficWidget";
 import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import { SpotifyWidget } from "./components/spotify-widget/SpotifyWidget";
+import { IPTVWidget } from "./components/iptv-widget/IPTVWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -59,6 +60,9 @@ function App() {
   // spotify widget state
   const [showSpotifyWidget, setShowSpotifyWidget] = useState<boolean>(false);
   const [spotifyQuery, setSpotifyQuery] = useState<string>("");
+  // iptv widget state
+  const [showIPTVWidget, setShowIPTVWidget] = useState<boolean>(false);
+  const [iptvQuery, setIPTVQuery] = useState<string>("");
 
   return (
     <div className="App">
@@ -88,6 +92,10 @@ function App() {
                 onShowSpotify={(query: string) => {
                   setSpotifyQuery(query);
                   setShowSpotifyWidget(true);
+                }}
+                onShowIPTV={(query: string) => {
+                  setIPTVQuery(query);
+                  setShowIPTVWidget(true);
                 }}
               />
               <video
@@ -143,6 +151,13 @@ function App() {
           <SpotifyWidget 
             searchQuery={spotifyQuery}
             onClose={() => setShowSpotifyWidget(false)}
+          />
+        )}
+        
+        {showIPTVWidget && (
+          <IPTVWidget 
+            searchQuery={iptvQuery}
+            onClose={() => setShowIPTVWidget(false)}
           />
         )}
       </LiveAPIProvider>
