@@ -1,0 +1,337 @@
+
+import React, { useState } from 'react';
+import './iptv-widget.scss';
+
+interface IPTVWidgetProps {
+  searchQuery: string;
+  onClose: () => void;
+}
+
+interface IPTVChannel {
+  id: string;
+  name: string;
+  url: string;
+  logo: string;
+  category: string;
+  language: string;
+  description: string;
+}
+
+const malaysianChannels: IPTVChannel[] = [
+  {
+    id: 'tv1',
+    name: 'TV1',
+    url: 'https://www.tvmalaysia.live/channel/tv1',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/TV1-Live-Streaming-HD-Now.webp',
+    category: 'General',
+    language: 'Malay',
+    description: 'Malaysia\'s first television channel offering news, entertainment, and educational content.'
+  },
+  {
+    id: 'tv2',
+    name: 'TV2',
+    url: 'https://www.tvmalaysia.live/channel/tv2',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/TV2-Malaysia-Live-Streaming-HD-Now.webp',
+    category: 'General',
+    language: 'Malay',
+    description: 'Malaysia\'s second television channel with diverse programming including dramas and variety shows.'
+  },
+  {
+    id: 'tv3',
+    name: 'TV3',
+    url: 'https://www.tvmalaysia.live/channel/tv3live',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/TV3-Live-Streaming-HD-Now-3.webp',
+    category: 'Commercial',
+    language: 'Malay',
+    description: 'Malaysia\'s first commercial television station featuring entertainment and news programs.'
+  },
+  {
+    id: 'tv8',
+    name: 'TV8',
+    url: 'https://www.tvmalaysia.live/channel/tv8live',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/8TV-Live-Malaysia-TV-Streaming-HD-Free.webp',
+    category: 'Entertainment',
+    language: 'Chinese/Malay',
+    description: 'Television channel focusing on Chinese and Malay entertainment content.'
+  },
+  {
+    id: 'tv9',
+    name: 'TV9',
+    url: 'https://www.tvmalaysia.live/channel/tv9live',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/TV9-Live-Streaming-HD-Now.webp',
+    category: 'Entertainment',
+    language: 'Malay',
+    description: 'Malaysian television channel offering variety shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'astroawani',
+    name: 'Astro Awani TV',
+    url: 'https://www.tvmalaysia.live/channel/awani',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Astro-Awani-Live-Streaming-HD-Now.webp',
+    category: 'News',
+    language: 'Malay',
+    description: 'Malaysian private television channel offering news programs.'
+  },
+  {
+    id: 'astroria',
+    name: 'Astro Ria TV',
+    url: 'https://www.tvmalaysia.live/channel/ria',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/03/Astro-Ria-Live-Streaming-Free-HD.webp',
+    category: 'Entertainment',
+    language: 'Malay',
+    description: 'Malaysian private television channel offering variety shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'astroprima',
+    name: 'Astro Prima TV',
+    url: 'https://www.tvmalaysia.live/channel/prima',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Prima-Live-Streaming-Malaysia-HD-Free.webp',
+    category: 'Entertainment',
+    language: 'Malay',
+    description: 'Malaysian private television channel offering variety shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'astrocitra',
+    name: 'Astro Citra TV',
+    url: 'https://www.tvmalaysia.live/channel/citra',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Citra-Live-Streaming-Malaysia-HD-Free.webp',
+    category: 'Entertainment',
+    language: 'Malay',
+    description: 'Malaysian private television channel offering variety shows, dramas, and entertainment programs.'
+  },
+  {
+    id: 'astroarena',
+    name: 'Astro Arena TV',
+    url: 'https://www.tvmalaysia.live/channel/arena',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+  },
+  {
+    id: 'astroarena',
+    name: 'Astro Arena 2 TV',
+    url: 'https://www.tvmalaysia.live/channel/arena-2',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'Malay / English',
+    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+  }
+];
+
+const searchChannels = (query: string): IPTVChannel[] => {
+  if (!query || query.trim() === '') {
+    return malaysianChannels;
+  }
+
+  const searchTerm = query.toLowerCase();
+  return malaysianChannels.filter(channel =>
+    channel.name.toLowerCase().includes(searchTerm) ||
+    channel.category.toLowerCase().includes(searchTerm) ||
+    channel.language.toLowerCase().includes(searchTerm) ||
+    channel.description.toLowerCase().includes(searchTerm)
+  );
+};
+
+export const IPTVWidget: React.FC<IPTVWidgetProps> = ({ searchQuery, onClose }) => {
+  const [channels] = useState<IPTVChannel[]>(searchChannels(searchQuery));
+  const [selectedChannel, setSelectedChannel] = useState<IPTVChannel | null>(
+    channels.length > 0 ? channels[0] : null
+  );
+  const [streamingMode, setStreamingMode] = useState<'iframe' | 'newTab'>('iframe');
+  const [iframeError, setIframeError] = useState<boolean>(false);
+
+  const openChannel = (channel: IPTVChannel) => {
+    window.open(channel.url, '_blank');
+  };
+
+  const handleIframeError = () => {
+    setIframeError(true);
+  };
+
+  const handleLogoError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.target as HTMLImageElement;
+    const channel = channels.find(ch => img.alt === ch.name);
+    if (channel && !img.src.includes('placeholder.com')) {
+      // First fallback: try a different logo source
+      const fallbackLogos: { [key: string]: string } = {
+        'tv1': 'https://i.imgur.com/tv1logo.png',
+        'tv2': 'https://i.imgur.com/tv2logo.png',
+        'tv3': 'https://i.imgur.com/tv3logo.png',
+        'tv8': 'https://i.imgur.com/tv8logo.png',
+        'tv9': 'https://i.imgur.com/tv9logo.png'
+      };
+      
+      if (fallbackLogos[channel.id] && !img.src.includes('imgur.com')) {
+        img.src = fallbackLogos[channel.id];
+      } else {
+        // Final fallback: colored placeholder with channel name
+        img.src = `https://via.placeholder.com/200x120/${getChannelColor(channel.id)}/ffffff?text=${encodeURIComponent(channel.name)}`;
+      }
+    }
+  };
+
+  const getChannelColor = (channelId: string): string => {
+    const colors: { [key: string]: string } = {
+      'tv1': 'FF0000',
+      'tv2': '0066CC', 
+      'tv3': 'FF6600',
+      'tv8': '9900CC',
+      'tv9': '00CC66'
+    };
+    return colors[channelId] || '666666';
+  };
+
+  return (
+    <div className="iptv-backdrop" onClick={onClose}>
+      <div className="iptv-widget" onClick={(e) => e.stopPropagation()}>
+        <div className="iptv-header">
+          <div className="iptv-title">
+            <h2>Live TV</h2>
+            <div className="search-query">
+              {searchQuery ? `Results for: "${searchQuery}"` : 'Malaysian TV Channels'}
+            </div>
+          </div>
+          <button className="close-button" onClick={onClose}>×</button>
+        </div>
+
+        <div className="iptv-content">
+          {selectedChannel && (
+            <div className="channel-player">
+              <div className="streaming-controls">
+                <button 
+                  className={`mode-button ${streamingMode === 'iframe' ? 'active' : ''}`}
+                  onClick={() => {
+                    setStreamingMode('iframe');
+                    setIframeError(false);
+                  }}
+                >
+                  🔴 Live Stream
+                </button>
+                <button 
+                  className={`mode-button ${streamingMode === 'newTab' ? 'active' : ''}`}
+                  onClick={() => setStreamingMode('newTab')}
+                >
+                  🌐 Open in Browser
+                </button>
+              </div>
+
+              {streamingMode === 'iframe' ? (
+                <div className="iframe-container">
+                  {iframeError ? (
+                    <div className="iframe-error">
+                      <div className="error-content">
+                        <h4>⚠️ Streaming Blocked</h4>
+                        <p>This channel cannot be embedded due to CORS restrictions.</p>
+                        <button 
+                          className="fallback-button"
+                          onClick={() => openChannel(selectedChannel)}
+                        >
+                          📺 Open in New Tab Instead
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <iframe
+                      src={selectedChannel.url}
+                      title={`${selectedChannel.name} Live Stream`}
+                      className="stream-iframe"
+                      onError={handleIframeError}
+                      onLoad={(e) => {
+                        // Check if iframe loaded successfully
+                        try {
+                          const iframe = e.target as HTMLIFrameElement;
+                          if (!iframe.contentDocument && !iframe.contentWindow) {
+                            handleIframeError();
+                          }
+                        } catch (error) {
+                          handleIframeError();
+                        }
+                      }}
+                      allow="fullscreen; autoplay; encrypted-media"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  )}
+                </div>
+              ) : (
+                <div className="channel-preview">
+                  <img 
+                    src={selectedChannel.logo} 
+                    alt={selectedChannel.name}
+                    onError={handleLogoError}
+                  />
+                  <div className="channel-overlay">
+                    <h3>{selectedChannel.name}</h3>
+                    <div className="channel-meta">
+                      <span className="category">{selectedChannel.category}</span>
+                      <span className="language">{selectedChannel.language}</span>
+                    </div>
+                    <button 
+                      className="watch-button"
+                      onClick={() => openChannel(selectedChannel)}
+                    >
+                      📺 Watch Live
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="channel-info">
+                <h3>{selectedChannel.name}</h3>
+                <p className="category">Category: {selectedChannel.category}</p>
+                <p className="language">Language: {selectedChannel.language}</p>
+                <p className="description">{selectedChannel.description}</p>
+                {streamingMode === 'iframe' && !iframeError && (
+                  <p className="streaming-note">
+                    🔴 Live streaming directly in widget. If content doesn't load, try "Open in Browser" mode.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="channel-list">
+            <h4>Available Channels</h4>
+            {channels.length === 0 ? (
+              <div className="no-results">
+                No channels found for "{searchQuery}". Try searching for TV1, TV2, TV3, TV8, or TV9.
+              </div>
+            ) : (
+              channels.map((channel) => (
+                <div
+                  key={channel.id}
+                  className={`channel-item ${selectedChannel?.id === channel.id ? 'active' : ''}`}
+                  onClick={() => setSelectedChannel(channel)}
+                >
+                  <img 
+                    src={channel.logo} 
+                    alt={channel.name} 
+                    className="channel-thumbnail"
+                    onError={handleLogoError}
+                  />
+                  <div className="channel-details">
+                    <h5>{channel.name}</h5>
+                    <p className="category">{channel.category}</p>
+                    <p className="language">{channel.language}</p>
+                  </div>
+                  <div className="channel-actions">
+                    <button 
+                      className="live-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openChannel(channel);
+                      }}
+                    >
+                      🔴 Live
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
