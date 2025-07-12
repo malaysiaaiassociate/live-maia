@@ -145,7 +145,7 @@ const malaysianChannels: IPTVChannel[] = [
     description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
   },
   {
-    id: 'astroarena',
+    id: 'astroarena2',
     name: 'Astro Arena 2 TV',
     url: 'https://www.tvmalaysia.live/channel/arena-2',
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
@@ -177,7 +177,7 @@ const malaysianChannels: IPTVChannel[] = [
     url: 'https://www.tvmalaysia.live/channel/sportsuhd',
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
-    language: 'Malay / English',
+    language: 'English',
     description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
   },
   {
@@ -186,7 +186,7 @@ const malaysianChannels: IPTVChannel[] = [
     url: 'https://www.tvmalaysia.live/channel/grandstand',
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
-    language: 'Malay / English',
+    language: 'English',
     description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
   }
 ];
