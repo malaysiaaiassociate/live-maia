@@ -24,6 +24,7 @@ interface AltairProps {
   onShowTraffic: (location: string) => void;
   onShowMap: (location: string) => void;
   onShowYouTube: (query: string) => void;
+  onShowSpotify: (query: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -106,7 +107,22 @@ const youtubeDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube }: AltairProps) {
+const spotifyDeclaration: FunctionDeclaration = {
+  name: "search_spotify_track",
+  description: "Search and display Spotify tracks when user asks to search for music on Spotify",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      query: {
+        type: Type.STRING,
+        description: "The search query for Spotify tracks (e.g., 'Bohemian Rhapsody', 'Imagine Dragons', 'new pop songs')"
+      }
+    },
+    required: ["query"]
+  }
+};
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -172,9 +188,9 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
         ],
       },
       tools: [
-        { googleSearch: {} },
-        { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration] },
-      ],
+          { googleSearch: {} },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration] },
+        ],
     });
   }, [setConfig, setModel, location, locationError]);
 
@@ -216,6 +232,11 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`YouTube search requested for: ${query}`);
 
           onShowYouTube(query);
+        } else if (fc.name === spotifyDeclaration.name) {
+          const query = (fc.args as any).query;
+          console.log(`Spotify search requested for: ${query}`);
+
+          onShowSpotify(query);
         }
       });
 
@@ -235,6 +256,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Map widget displayed for ${(fc.args as any).location}.`
                       : fc.name === youtubeDeclaration.name
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
+                      : fc.name === spotifyDeclaration.name
+                      ? `Spotify search widget displayed for "${(fc.args as any).query}".`
                       : "Function executed successfully"
                   } 
                 },
@@ -250,7 +273,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
