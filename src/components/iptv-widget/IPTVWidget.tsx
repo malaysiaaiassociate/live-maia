@@ -142,7 +142,7 @@ const malaysianChannels: IPTVChannel[] = [
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'Malay / English',
-    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
   },
   {
     id: 'astroarena2',
@@ -151,7 +151,7 @@ const malaysianChannels: IPTVChannel[] = [
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'Malay / English',
-    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
   },
   {
     id: 'astroarenabola',
@@ -160,7 +160,7 @@ const malaysianChannels: IPTVChannel[] = [
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-2-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'Malay / English',
-    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
   },
   {
     id: 'astroarenabola2',
@@ -169,7 +169,7 @@ const malaysianChannels: IPTVChannel[] = [
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Bola-2-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'Malay / English',
-    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
   },
   {
     id: 'astrosportsuhd',
@@ -178,16 +178,151 @@ const malaysianChannels: IPTVChannel[] = [
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'English',
-    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
   },
   {
     id: 'astrograndstand',
-    name: 'Astro Grand Stand TV',
+    name: 'Astro Grandstand TV',
     url: 'https://www.tvmalaysia.live/channel/grandstand',
     logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
     category: 'Sports',
     language: 'English',
-    description: 'Malaysian private television channel offering variety Sports shows and entertainment programs.'
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'astropremierleague',
+    name: 'Astro Premier League TV',
+    url: 'https://www.tvmalaysia.live/channel/premierleague',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Football-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'astropremierleague2',
+    name: 'Astro Premier League 2 TV',
+    url: 'https://www.tvmalaysia.live/channel/premierleague2',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Football-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'astrofootball',
+    name: 'Astro Football TV',
+    url: 'https://www.tvmalaysia.live/channel/football',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Football-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'astrobadminton',
+    name: 'Astro Badminton TV',
+    url: 'https://www.tvmalaysia.live/channel/badminton',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Badminton-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'astrosportsplus',
+    name: 'Astro Sports Plus TV',
+    url: 'https://www.tvmalaysia.live/channel/sportsplus',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Arena-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'astrocricket',
+    name: 'Astro Cricket TV',
+    url: 'https://www.tvmalaysia.live/channel/astro-cricket',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/Astro-Cricket-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'mutv',
+    name: 'MUTV',
+    url: 'https://www.tvmalaysia.live/channel/mutv',
+    logo: 'https://malaysia-tv.net/wp-content/uploads/2025/04/MUTV-Live-Streaming-HD-Free.webp',
+    category: 'Sports',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety sports shows and entertainment programs.'
+  },
+  {
+    id: 'hbo',
+    name: 'HBO TV',
+    url: 'https://www.tvmalaysia.live/channel/hbo',
+    logo: 'https://blob.panzoid.com/creation-thumbnails/665579.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'hbohits',
+    name: 'HBO Hits TV',
+    url: 'https://www.tvmalaysia.live/channel/hbo-hits',
+    logo: 'https://i.pinimg.com/736x/a4/88/ee/a488ee2e8b3586bd0fcd5bd81f42b842.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'hbosignature',
+    name: 'HBO Signature TV',
+    url: 'https://www.tvmalaysia.live/channel/hbo-signature',
+    logo: 'https://www.velvet.de/wordpress/wp-content/uploads/2005/design/hbo_signature/projekt_images/velvet_HBO_08-x500.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'hbofamily',
+    name: 'HBO Family TV',
+    url: 'https://www.tvmalaysia.live/channel/hbo-family',
+    logo: 'https://dj7fdt04hl8tv.cloudfront.net/acm/media/njoi/njoi-apps-acmmasthead-_njoi-acmasthead-hbofamily-656x388.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'cinemax',
+    name: 'Cinemax TV',
+    url: 'https://www.tvmalaysia.live/channel/cinemax',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo-cinemax.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'axn',
+    name: 'AXN TV',
+    url: 'https://www.tvmalaysia.live/channel/axn',
+    logo: 'https://www.axn-asia.com/sites/axn-asia.com/files/ct_custom_page_f_primary_image/AXN_LOGO-620x348.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'warner',
+    name: 'Warner Bros TV',
+    url: 'https://www.tvmalaysia.live/channel/warner',
+    logo: 'https://orangemagazine.ph/wp-content/uploads/2019/01/Warner-TV.jpg',
+    category: 'Movies',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety movies shows and entertainment programs.'
+  },
+  {
+    id: 'mtv',
+    name: 'MTV Live',
+    url: 'https://www.tvmalaysia.live/channel/mtv-live-hd',
+    logo: 'https://content.osn.com/bob/745x419/MTL.jpg',
+    category: 'Musics',
+    language: 'English',
+    description: 'Malaysian private television channel offering variety musics shows and entertainment programs.'
   }
 ];
 
