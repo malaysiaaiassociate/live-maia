@@ -25,6 +25,7 @@ interface AltairProps {
   onShowMap: (location: string) => void;
   onShowYouTube: (query: string) => void;
   onShowSpotify: (query: string) => void;
+  onShowIPTV: (query: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -122,7 +123,22 @@ const spotifyDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify }: AltairProps) {
+const iptvDeclaration: FunctionDeclaration = {
+  name: "search_iptv_channel",
+  description: "Search and display IPTV channels when user asks to watch TV, live channels, or Malaysian TV",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      query: {
+        type: Type.STRING,
+        description: "The search query for IPTV channels (e.g., 'TV1', 'TV2', 'TV3', 'Malaysian TV', 'live channels')"
+      }
+    },
+    required: ["query"]
+  }
+};
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -189,7 +205,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -237,6 +253,11 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`Spotify search requested for: ${query}`);
 
           onShowSpotify(query);
+        } else if (fc.name === iptvDeclaration.name) {
+          const query = (fc.args as any).query;
+          console.log(`IPTV search requested for: ${query}`);
+
+          onShowIPTV(query);
         }
       });
 
@@ -258,6 +279,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === spotifyDeclaration.name
                       ? `Spotify search widget displayed for "${(fc.args as any).query}".`
+                      : fc.name === iptvDeclaration.name
+                      ? `IPTV channel search widget displayed for "${(fc.args as any).query}".`
                       : "Function executed successfully"
                   } 
                 },
@@ -273,7 +296,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
