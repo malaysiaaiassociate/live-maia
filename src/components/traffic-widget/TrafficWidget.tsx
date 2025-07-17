@@ -28,7 +28,7 @@ export const TrafficWidget: React.FC<TrafficWidgetProps> = ({ location, onClose 
 
       try {
         // Create HTML content for iframe with Google Maps and traffic layer
-        const mapHtml = 
+        const mapHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -67,16 +67,16 @@ export const TrafficWidget: React.FC<TrafficWidgetProps> = ({ location, onClose 
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&callback=initMap&libraries=geometry"></script>
 </body>
-</html>;
+</html>`;
 
         // Convert HTML to data URL for iframe src
-        const mapUrl = data:text/html;charset=utf-8,${encodeURIComponent(mapHtml)};
+        const mapUrl = `data:text/html;charset=utf-8,${encodeURIComponent(mapHtml)}`;
 
         // Create traffic data object
         const data: TrafficData = {
           location: location,
           mapUrl: mapUrl,
-          trafficSummary: Real-time traffic conditions with live traffic layer for ${location},
+          trafficSummary: `Real-time traffic conditions with live traffic layer for ${location}`,
           lastUpdated: new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: 'numeric',
@@ -93,7 +93,7 @@ export const TrafficWidget: React.FC<TrafficWidgetProps> = ({ location, onClose 
         setTrafficData({
           location: location,
           mapUrl: '',
-          trafficSummary: Traffic data for ${location} is currently unavailable,
+          trafficSummary: `Traffic data for ${location} is currently unavailable`,
           lastUpdated: new Date().toLocaleTimeString()
         });
       } finally {
@@ -158,7 +158,7 @@ export const TrafficWidget: React.FC<TrafficWidgetProps> = ({ location, onClose 
                 className="traffic-map"
                 allowFullScreen
                 loading="lazy"
-                title={Traffic map for ${trafficData.location}}
+                title={`Traffic map for ${trafficData.location}`}
               />
             </div>
           ) : (
