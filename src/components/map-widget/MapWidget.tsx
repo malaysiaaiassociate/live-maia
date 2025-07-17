@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import './map-widget.scss';
 
@@ -13,12 +12,28 @@ interface MapData {
   lastUpdated: string;
 }
 
+const isWebView = () => {
+  const ua = navigator.userAgent || navigator.vendor || '';
+  const standalone = (window.navigator as any).standalone === true;
+
+  const isIOSWebView = /iPhone|iPod|iPad/.test(ua) && !standalone && !/Safari/.test(ua);
+  const isAndroidWebView = /\bwv\b/.test(ua) || /Android.*Version\/[\d.]+.*Chrome/.test(ua) && !/Chrome\/\d{2,}/.test(ua);
+
+  return isIOSWebView || isAndroidWebView;
+};
+
 export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
   const [mapData, setMapData] = useState<MapData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isHidden, setIsHidden] = useState<boolean>(false);
 
   useEffect(() => {
+    if (isWebView()) {
+      setIsHidden(true);
+      return;
+    }
+
     const loadMapData = async () => {
       if (!location) return;
 
@@ -26,67 +41,55 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
       setError(null);
 
       try {
-        // Create HTML content for iframe with Google Maps
         const mapHtml = `
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        #map { height: 100vh; width: 100%; }
-    </style>
+  <style>
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    #map { height: 100vh; width: 100%; }
+  </style>
 </head>
 <body>
-    <div id="map"></div>
-    <script>
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 15,
-                center: { lat: 3.1319, lng: 101.6958 }, // Default to KL
-                mapTypeId: 'roadmap'
-            });
-            
-            // Geocode the location
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ address: '${location}' }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    map.setCenter(results[0].geometry.location);
-                    new google.maps.Marker({
-                        position: results[0].geometry.location,
-                        map: map,
-                        title: '${location}'
-                    });
-                    
-                    // Add info window with location details
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: '<div style="padding: 5px;"><strong>${location}</strong></div>'
-                    });
-                    
-                    const marker = new google.maps.Marker({
-                        position: results[0].geometry.location,
-                        map: map,
-                        title: '${location}'
-                    });
-                    
-                    marker.addListener('click', () => {
-                        infoWindow.open(map, marker);
-                    });
-                    
-                    // Auto-open info window
-                    infoWindow.open(map, marker);
-                }
-            });
+  <div id="map"></div>
+  <script>
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 15,
+        center: { lat: 3.1319, lng: 101.6958 },
+        mapTypeId: 'roadmap'
+      });
+
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: '${location}' }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          map.setCenter(results[0].geometry.location);
+          const marker = new google.maps.Marker({
+            position: results[0].geometry.location,
+            map: map,
+            title: '${location}'
+          });
+
+          const infoWindow = new google.maps.InfoWindow({
+            content: '<div style="padding: 5px;"><strong>${location}</strong></div>'
+          });
+
+          marker.addListener('click', () => {
+            infoWindow.open(map, marker);
+          });
+
+          infoWindow.open(map, marker);
         }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&callback=initMap&libraries=geometry"></script>
+      });
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&callback=initMap&libraries=geometry"></script>
 </body>
 </html>`;
 
-        // Convert HTML to data URL for iframe src
         const mapUrl = `data:text/html;charset=utf-8,${encodeURIComponent(mapHtml)}`;
 
-        // Create map data object
-        const data: MapData = {
+        setMapData({
           location: location,
           mapUrl: mapUrl,
           lastUpdated: new Date().toLocaleTimeString('en-US', {
@@ -94,14 +97,11 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
             minute: 'numeric',
             hour12: true
           })
-        };
-
-        setMapData(data);
+        });
       } catch (err) {
         console.error('Failed to load map data:', err);
         setError('Failed to load map data. Please try again.');
 
-        // Fallback data
         setMapData({
           location: location,
           mapUrl: '',
@@ -114,6 +114,8 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
 
     loadMapData();
   }, [location]);
+
+  if (isHidden) return null;
 
   if (loading || !mapData) {
     return (
@@ -139,9 +141,7 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
             <h2>Map</h2>
             <button className="close-button" onClick={onClose}>×</button>
           </div>
-          <div className="error-message">
-            {error}
-          </div>
+          <div className="error-message">{error}</div>
         </div>
       </div>
     );
