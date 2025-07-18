@@ -17,7 +17,7 @@ const isWebView = () => {
   const standalone = (window.navigator as any).standalone === true;
 
   const isIOSWebView = /iPhone|iPod|iPad/.test(ua) && !standalone && !/Safari/.test(ua);
-  const isAndroidWebView = /\bwv\b/.test(ua) || /Android.*Version\/[\d.]+.*Chrome/.test(ua) && !/Chrome\/\d{2,}/.test(ua);
+  const isAndroidWebView = /\bwv\b/.test(ua) || (/Android.*Version\/[\d.]+.*Chrome/.test(ua) && !/Chrome\/\d{2,}/.test(ua));
 
   return isIOSWebView || isAndroidWebView;
 };
