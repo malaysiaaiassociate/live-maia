@@ -432,7 +432,7 @@ export const IPTVWidget: React.FC<IPTVWidgetProps> = ({ searchQuery, onClose }) 
           <div className="iptv-title">
             <h2>Live TV</h2>
             <div className="search-query">
-              {searchQuery ? `Results for: "${searchQuery}"` : 'Malaysian TV Channels'}
+              {searchQuery ? `Results for: "${searchQuery}"` : 'TV Channels'}
             </div>
           </div>
           <button className="close-button" onClick={onClose}>×</button>
