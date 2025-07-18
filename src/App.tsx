@@ -29,6 +29,8 @@ import { SpotifyWidget } from "./components/spotify-widget/SpotifyWidget";
 import { IPTVWidget } from "./components/iptv-widget/IPTVWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
+import { InstagramWidget } from './components/instagram-widget/InstagramWidget';
+import { TikTokWidget } from './components/tiktok-widget/TikTokWidget';
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -63,6 +65,12 @@ function App() {
   // iptv widget state
   const [showIPTVWidget, setShowIPTVWidget] = useState<boolean>(false);
   const [iptvQuery, setIPTVQuery] = useState<string>("");
+   // instagram widget state
+  const [showInstagramWidget, setShowInstagramWidget] = useState<boolean>(false);
+  const [instagramUsername, setInstagramUsername] = useState<string>("");
+  // tiktok widget state
+  const [showTikTokWidget, setShowTikTokWidget] = useState<boolean>(false);
+  const [tiktokUsername, setTiktokUsername] = useState<string>("");
 
   return (
     <div className="App">
@@ -97,6 +105,14 @@ function App() {
                   setIPTVQuery(query);
                   setShowIPTVWidget(true);
                 }}
+                onShowInstagram={(username: string) => {
+                  setInstagramUsername(username);
+                  setShowInstagramWidget(true);
+                }}
+                onShowTikTok={(username: string) => {
+                  setTiktokUsername(username);
+                  setShowTikTokWidget(true);
+                }}
               />
               <video
                 className={cn("stream", {
@@ -118,46 +134,60 @@ function App() {
             </ControlTray>
           </main>
         </div>
-        
+
         {showWeatherWidget && (
           <WeatherWidget 
             location={weatherLocation}
             onClose={() => setShowWeatherWidget(false)}
           />
         )}
-        
+
         {showTrafficWidget && (
           <TrafficWidget 
             location={trafficLocation}
             onClose={() => setShowTrafficWidget(false)}
           />
         )}
-        
+
         {showMapWidget && (
           <MapWidget 
             location={mapLocation}
             onClose={() => setShowMapWidget(false)}
           />
         )}
-        
+
         {showYouTubeWidget && (
           <YouTubeWidget 
             searchQuery={youTubeQuery}
             onClose={() => setShowYouTubeWidget(false)}
           />
         )}
-        
+
         {showSpotifyWidget && (
           <SpotifyWidget 
             searchQuery={spotifyQuery}
             onClose={() => setShowSpotifyWidget(false)}
           />
         )}
-        
+
         {showIPTVWidget && (
           <IPTVWidget 
             searchQuery={iptvQuery}
             onClose={() => setShowIPTVWidget(false)}
+          />
+        )}
+
+        {showInstagramWidget && (
+          <InstagramWidget 
+            username={instagramUsername}
+            onClose={() => setShowInstagramWidget(false)}
+          />
+        )}
+
+        {showTikTokWidget && (
+          <TikTokWidget
+            username={tiktokUsername}
+            onClose={() => setShowTikTokWidget(false)}
           />
         )}
       </LiveAPIProvider>
