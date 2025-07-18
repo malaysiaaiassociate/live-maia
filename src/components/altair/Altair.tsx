@@ -26,6 +26,8 @@ interface AltairProps {
   onShowYouTube: (query: string) => void;
   onShowSpotify: (query: string) => void;
   onShowIPTV: (query: string) => void;
+  onShowInstagram: (username: string) => void;
+  onShowTikTok: (username: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -138,7 +140,39 @@ const iptvDeclaration: FunctionDeclaration = {
   }
 };
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV }: AltairProps) {
+const instagramDeclaration: FunctionDeclaration = {
+  name: "show_instagram_profile",
+  description: "Display an Instagram profile page when user asks to find someone on Instagram",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      username: {
+        type: Type.STRING,
+        description: "The Instagram username to display (e.g., 'natgeo', 'nasa', 'instagram')"
+      }
+    },
+    required: ["username"]
+  }
+};
+
+const tiktokDeclaration: FunctionDeclaration = {
+  name: "show_tiktok_profile",
+  description: "Display a TikTok profile page when user asks to find someone on TikTok",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      username: {
+        type: Type.STRING,
+        description: "The TikTok username to display (e.g., 'khaby.lame', 'charlidamelio', 'tiktok')"
+      }
+    },
+    required: ["username"]
+  }
+};
+
+
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onShowInstagram, onShowTikTok }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -205,7 +239,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, instagramDeclaration, tiktokDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -255,9 +289,19 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           onShowSpotify(query);
         } else if (fc.name === iptvDeclaration.name) {
           const query = (fc.args as any).query;
-          console.log(`IPTV search requested for: ${query}`);
+          console.log(`IPTV search requested: ${query}`);
 
           onShowIPTV(query);
+        } else if (fc.name === instagramDeclaration.name) {
+          const username = (fc.args as any).username;
+          console.log(`Instagram profile requested for: ${username}`);
+
+          onShowInstagram(username);
+        } else if (fc.name === tiktokDeclaration.name) {
+          const username = (fc.args as any).username;
+          console.log(`TikTok profile requested for: ${username}`);
+
+          onShowTikTok(username);
         }
       });
 
@@ -281,6 +325,10 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Spotify search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === iptvDeclaration.name
                       ? `IPTV channel search widget displayed for "${(fc.args as any).query}".`
+                      : fc.name === instagramDeclaration.name
+                      ? `Instagram profile widget displayed for ${(fc.args as any).username}.`
+                      : fc.name === tiktokDeclaration.name
+                      ? `TikTok profile widget displayed for ${(fc.args as any).username}.`
                       : "Function executed successfully"
                   } 
                 },
@@ -296,7 +344,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onShowInstagram, onShowTikTok]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
