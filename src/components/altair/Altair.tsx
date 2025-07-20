@@ -193,7 +193,7 @@ const searchWebsiteDeclaration: FunctionDeclaration = {
     properties: {
       website: {
         type: Type.STRING,
-        description: "The website to search on (e.g., 'google', 'youtube', 'amazon', 'wikipedia', 'reddit', 'twitter', 'instagram', 'facebook')"
+        description: "The website to search on (e.g., 'google', 'youtube', 'amazon', 'wikipedia', 'reddit', 'x', 'instagram', 'facebook')"
       },
       query: {
         type: Type.STRING,
@@ -356,7 +356,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
         } else if (fc.name === searchWebsiteDeclaration.name) {
           const website = (fc.args as any).website;
           const query = (fc.args as any).query;
-
+          
           // Build search URL based on the website
           let searchUrl = '';
           const encodedQuery = encodeURIComponent(query);
@@ -371,21 +371,42 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'amazon':
               searchUrl = `https://www.amazon.com/s?k=${encodedQuery}`;
               break;
+            case 'shopee':
+              searchUrl = `https://shopee.com.my/search?keyword=${encodedQuery}`;
+              break;
+            case 'lazada':
+              searchUrl = `https://www.lazada.com.my/tag/${encodedQuery}/?spm=a2o4k.homepage.search.d_go&q=${encodedQuery}&catalog_redirect_tag=true`;
+              break;
+            case 'carousell':
+              searchUrl = `https://www.carousell.com.my/search/${encodedQuery}`;
+              break;
+            case 'ebay':
+              searchUrl = `https://www.ebay.com.my/sch/i.html?_nkw=${encodedQuery}`;
+              break;
+            case 'temu':
+              searchUrl = `https://www.temu.com/search_result.html?search_key=${encodedQuery}`;
+              break;
+            case 'etsy':
+              searchUrl = `https://www.etsy.com/search?q=${encodedQuery}`;
+              break;
             case 'wikipedia':
               searchUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodedQuery}`;
               break;
             case 'reddit':
               searchUrl = `https://www.reddit.com/search/?q=${encodedQuery}`;
               break;
-            case 'x':
-            case 'twitter':
-              searchUrl = `https://x.com/search?q=${encodedQuery}`;
+            case 'tiktok':
+              searchUrl = `https://www.tiktok.com/search?q=${encodedQuery}`;
               break;
-            case 'instagram':
-              searchUrl = `https://www.instagram.com/explore/tags/${encodedQuery.replace(/\s+/g, '')}/`;
+            case 'x':
+              // Remove spaces and special characters for username-like queries
+              const xUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+              searchUrl = `https://x.com/${xUsernameQuery}`;
               break;
             case 'facebook':
-              searchUrl = `https://www.facebook.com/search/top?q=${encodedQuery}`;
+                // Remove spaces and special characters for Facebook username
+              const fbUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
+              searchUrl = `https://www.facebook.com/${fbUsernameQuery}`;
               break;
             case 'bing':
               searchUrl = `https://www.bing.com/search?q=${encodedQuery}`;
@@ -400,13 +421,11 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
               searchUrl = `https://stackoverflow.com/search?q=${encodedQuery}`;
               break;
             case 'linkedin':
-              searchUrl = `https://www.linkedin.com/search/results/all/?keywords=${encodedQuery}`;
+              const liUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
+              searchUrl = `https://www.linkedin.com/in/${liUsernameQuery}`;
               break;
             case 'pinterest':
               searchUrl = `https://www.pinterest.com/search/pins/?q=${encodedQuery}`;
-              break;
-            case 'tiktok':
-              searchUrl = `https://www.tiktok.com/search?q=${encodedQuery}`;
               break;
             case 'twitch':
               searchUrl = `https://www.twitch.tv/search?term=${encodedQuery}`;
@@ -416,12 +435,6 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
               break;
             case 'soundcloud':
               searchUrl = `https://soundcloud.com/search?q=${encodedQuery}`;
-              break;
-            case 'ebay':
-              searchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
-              break;
-            case 'etsy':
-              searchUrl = `https://www.etsy.com/search?q=${encodedQuery}`;
               break;
             case 'imdb':
               searchUrl = `https://www.imdb.com/find?q=${encodedQuery}`;
