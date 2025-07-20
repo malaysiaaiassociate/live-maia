@@ -170,6 +170,39 @@ const tiktokDeclaration: FunctionDeclaration = {
   }
 };
 
+const openWebsiteDeclaration: FunctionDeclaration = {
+  name: "open_website",
+  description: "Open any website in a new browser tab when user asks to open, visit, or go to a website",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      url: {
+        type: Type.STRING,
+        description: "The website URL to open (e.g., 'https://google.com', 'facebook.com', 'youtube.com'). Add https:// if not provided."
+      }
+    },
+    required: ["url"]
+  }
+};
+
+const searchWebsiteDeclaration: FunctionDeclaration = {
+  name: "search_website",
+  description: "Search for specific content on a website and open the search results in a new browser tab",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      website: {
+        type: Type.STRING,
+        description: "The website to search on (e.g., 'google', 'youtube', 'amazon', 'wikipedia', 'reddit', 'twitter', 'instagram', 'facebook')"
+      },
+      query: {
+        type: Type.STRING,
+        description: "The search query to look for on the website"
+      }
+    },
+    required: ["website", "query"]
+  }
+};
 
 
 function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onShowInstagram, onShowTikTok }: AltairProps) {
@@ -239,7 +272,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, instagramDeclaration, tiktokDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, instagramDeclaration, tiktokDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -302,6 +335,124 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`TikTok profile requested for: ${username}`);
 
           onShowTikTok(username);
+        } else if (fc.name === openWebsiteDeclaration.name) {
+          const url = (fc.args as any).url;
+          let formattedUrl = url;
+
+          // Add https:// if no protocol is specified
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            formattedUrl = `https://${url}`;
+          }
+
+          // Open website in new tab
+          try {
+            window.open(formattedUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened website: ${url}`);
+          } catch (error) {
+            console.error(`Failed to open website: ${url}`, error);
+          }
+
+          console.log(`Opening website requested: ${url}`);
+        } else if (fc.name === searchWebsiteDeclaration.name) {
+          const website = (fc.args as any).website;
+          const query = (fc.args as any).query;
+
+          // Build search URL based on the website
+          let searchUrl = '';
+          const encodedQuery = encodeURIComponent(query);
+
+          switch (website.toLowerCase()) {
+            case 'google':
+              searchUrl = `https://www.google.com/search?q=${encodedQuery}`;
+              break;
+            case 'youtube':
+              searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
+              break;
+            case 'amazon':
+              searchUrl = `https://www.amazon.com/s?k=${encodedQuery}`;
+              break;
+            case 'wikipedia':
+              searchUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodedQuery}`;
+              break;
+            case 'reddit':
+              searchUrl = `https://www.reddit.com/search/?q=${encodedQuery}`;
+              break;
+            case 'twitter':
+            case 'x':
+              searchUrl = `https://twitter.com/search?q=${encodedQuery}`;
+              break;
+            case 'instagram':
+              searchUrl = `https://www.instagram.com/explore/tags/${encodedQuery.replace(/\s+/g, '')}/`;
+              break;
+            case 'facebook':
+              searchUrl = `https://www.facebook.com/search/top?q=${encodedQuery}`;
+              break;
+            case 'bing':
+              searchUrl = `https://www.bing.com/search?q=${encodedQuery}`;
+              break;
+            case 'duckduckgo':
+              searchUrl = `https://duckduckgo.com/?q=${encodedQuery}`;
+              break;
+            case 'github':
+              searchUrl = `https://github.com/search?q=${encodedQuery}`;
+              break;
+            case 'stackoverflow':
+              searchUrl = `https://stackoverflow.com/search?q=${encodedQuery}`;
+              break;
+            case 'linkedin':
+              searchUrl = `https://www.linkedin.com/search/results/all/?keywords=${encodedQuery}`;
+              break;
+            case 'pinterest':
+              searchUrl = `https://www.pinterest.com/search/pins/?q=${encodedQuery}`;
+              break;
+            case 'tiktok':
+              searchUrl = `https://www.tiktok.com/search?q=${encodedQuery}`;
+              break;
+            case 'twitch':
+              searchUrl = `https://www.twitch.tv/search?term=${encodedQuery}`;
+              break;
+            case 'spotify':
+              searchUrl = `https://open.spotify.com/search/${encodedQuery}`;
+              break;
+            case 'soundcloud':
+              searchUrl = `https://soundcloud.com/search?q=${encodedQuery}`;
+              break;
+            case 'ebay':
+              searchUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
+              break;
+            case 'etsy':
+              searchUrl = `https://www.etsy.com/search?q=${encodedQuery}`;
+              break;
+            case 'imdb':
+              searchUrl = `https://www.imdb.com/find?q=${encodedQuery}`;
+              break;
+            case 'news':
+            case 'google news':
+              searchUrl = `https://news.google.com/search?q=${encodedQuery}`;
+              break;
+            case 'maps':
+            case 'google maps':
+              searchUrl = `https://www.google.com/maps/search/${encodedQuery}`;
+              break;
+            case 'images':
+            case 'google images':
+              searchUrl = `https://www.google.com/search?q=${encodedQuery}&tbm=isch`;
+              break;
+            default:
+              // Default to Google search if website not recognized
+              searchUrl = `https://www.google.com/search?q=${encodedQuery}+${website}`;
+              break;
+          }
+
+          // Open search results in new tab
+          try {
+            window.open(searchUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened search results for "${query}" on ${website}`);
+          } catch (error) {
+            console.error(`Failed to open search results for "${query}" on ${website}`, error);
+          }
+
+          console.log(`Search requested: "${query}" on ${website}`);
         }
       });
 
@@ -329,6 +480,10 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Instagram profile widget displayed for ${(fc.args as any).username}.`
                       : fc.name === tiktokDeclaration.name
                       ? `TikTok profile widget displayed for ${(fc.args as any).username}.`
+                      : fc.name === openWebsiteDeclaration.name
+                      ? `Opening ${ (fc.args as any).url } in a new tab.`
+                      : fc.name === searchWebsiteDeclaration.name
+                      ? `Searching for "${(fc.args as any).query}" on ${(fc.args as any).website} and opening results in a new tab.`
                       : "Function executed successfully"
                   } 
                 },
