@@ -377,9 +377,9 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'reddit':
               searchUrl = `https://www.reddit.com/search/?q=${encodedQuery}`;
               break;
-            case 'twitter':
             case 'x':
-              searchUrl = `https://twitter.com/search?q=${encodedQuery}`;
+            case 'twitter':
+              searchUrl = `https://x.com/search?q=${encodedQuery}`;
               break;
             case 'instagram':
               searchUrl = `https://www.instagram.com/explore/tags/${encodedQuery.replace(/\s+/g, '')}/`;
