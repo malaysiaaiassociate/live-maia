@@ -26,7 +26,7 @@ interface AltairProps {
   onShowYouTube: (query: string) => void;
   onShowSpotify: (query: string) => void;
   onShowIPTV: (query: string) => void;
-  
+  onGenerateImage: (prompt: string) => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -175,8 +175,23 @@ const searchWebsiteDeclaration: FunctionDeclaration = {
   }
 };
 
+const imageGenerationDeclaration: FunctionDeclaration = {
+  name: "generate_image",
+  description: "Generate a highly realistic image based on a text prompt using Stable Diffusion XL via Hugging Face Inference API.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      prompt: {
+        type: Type.STRING,
+        description: "A detailed text prompt describing the image to be generated."
+      }
+    },
+    required: ["prompt"]
+  }
+};
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV }: AltairProps) {
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onGenerateImage }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -243,7 +258,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -296,7 +311,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`IPTV search requested: ${query}`);
 
           onShowIPTV(query);
-        
+
         } else if (fc.name === openWebsiteDeclaration.name) {
           const url = (fc.args as any).url;
           let formattedUrl = url;
@@ -318,7 +333,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
         } else if (fc.name === searchWebsiteDeclaration.name) {
           const website = (fc.args as any).website;
           const query = (fc.args as any).query;
-          
+
           // Build search URL based on the website
           let searchUrl = '';
           const encodedQuery = encodeURIComponent(query);
@@ -431,6 +446,12 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           }
 
           console.log(`Search requested: "${query}" on ${website}`);
+        } else if (fc.name === imageGenerationDeclaration.name) {
+          const prompt = (fc.args as any).prompt;
+          console.log(`Image generation requested with prompt: ${prompt}`);
+
+          // Trigger the image generation widget
+          onGenerateImage(prompt);
         }
       });
 
@@ -454,11 +475,12 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Spotify search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === iptvDeclaration.name
                       ? `IPTV channel search widget displayed for "${(fc.args as any).query}".`
-                      
                       : fc.name === openWebsiteDeclaration.name
                       ? `Opening ${ (fc.args as any).url } in a new tab.`
                       : fc.name === searchWebsiteDeclaration.name
                       ? `Searching for "${(fc.args as any).query}" on ${(fc.args as any).website} and opening results in a new tab.`
+                      : fc.name === imageGenerationDeclaration.name
+                      ? `Image generation widget displayed for prompt: "${(fc.args as any).prompt}". I have already generated and displayed the image you requested.`
                       : "Function executed successfully"
                   } 
                 },
@@ -474,7 +496,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onGenerateImage]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
