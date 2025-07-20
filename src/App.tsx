@@ -27,6 +27,7 @@ import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
 import { SpotifyWidget } from "./components/spotify-widget/SpotifyWidget";
 import { IPTVWidget } from "./components/iptv-widget/IPTVWidget";
+import { ImageGenerationWidget } from "./components/image-generation-widget/ImageGenerationWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -64,6 +65,9 @@ function App() {
   // iptv widget state
   const [showIPTVWidget, setShowIPTVWidget] = useState<boolean>(false);
   const [iptvQuery, setIPTVQuery] = useState<string>("");
+  // image generation widget state
+  const [showImageWidget, setShowImageWidget] = useState<boolean>(false);
+  const [imagePrompt, setImagePrompt] = useState<string>("");
    
 
   return (
@@ -98,6 +102,10 @@ function App() {
                 onShowIPTV={(query: string) => {
                   setIPTVQuery(query);
                   setShowIPTVWidget(true);
+                }}
+                onGenerateImage={(prompt: string) => {
+                  setImagePrompt(prompt);
+                  setShowImageWidget(true);
                 }}
                 
               />
@@ -161,6 +169,16 @@ function App() {
           <IPTVWidget 
             searchQuery={iptvQuery}
             onClose={() => setShowIPTVWidget(false)}
+          />
+        )}
+
+        {showImageWidget && (
+          <ImageGenerationWidget 
+            prompt={imagePrompt}
+            onClose={() => {
+              setShowImageWidget(false);
+              setImagePrompt('');
+            }}
           />
         )}
 
