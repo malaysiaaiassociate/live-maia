@@ -26,8 +26,7 @@ interface AltairProps {
   onShowYouTube: (query: string) => void;
   onShowSpotify: (query: string) => void;
   onShowIPTV: (query: string) => void;
-  onShowInstagram: (username: string) => void;
-  onShowTikTok: (username: string) => void;
+  
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -140,35 +139,7 @@ const iptvDeclaration: FunctionDeclaration = {
   }
 };
 
-const instagramDeclaration: FunctionDeclaration = {
-  name: "show_instagram_profile",
-  description: "Display an Instagram profile page when user asks to find someone on Instagram",
-  parameters: {
-    type: Type.OBJECT,
-    properties: {
-      username: {
-        type: Type.STRING,
-        description: "The Instagram username to display (e.g., 'natgeo', 'nasa', 'instagram')"
-      }
-    },
-    required: ["username"]
-  }
-};
 
-const tiktokDeclaration: FunctionDeclaration = {
-  name: "show_tiktok_profile",
-  description: "Display a TikTok profile page when user asks to find someone on TikTok",
-  parameters: {
-    type: Type.OBJECT,
-    properties: {
-      username: {
-        type: Type.STRING,
-        description: "The TikTok username to display (e.g., 'khaby.lame', 'charlidamelio', 'tiktok')"
-      }
-    },
-    required: ["username"]
-  }
-};
 
 const openWebsiteDeclaration: FunctionDeclaration = {
   name: "open_website",
@@ -205,7 +176,7 @@ const searchWebsiteDeclaration: FunctionDeclaration = {
 };
 
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onShowInstagram, onShowTikTok }: AltairProps) {
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -272,7 +243,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, instagramDeclaration, tiktokDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -325,16 +296,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`IPTV search requested: ${query}`);
 
           onShowIPTV(query);
-        } else if (fc.name === instagramDeclaration.name) {
-          const username = (fc.args as any).username;
-          console.log(`Instagram profile requested for: ${username}`);
-
-          onShowInstagram(username);
-        } else if (fc.name === tiktokDeclaration.name) {
-          const username = (fc.args as any).username;
-          console.log(`TikTok profile requested for: ${username}`);
-
-          onShowTikTok(username);
+        
         } else if (fc.name === openWebsiteDeclaration.name) {
           const url = (fc.args as any).url;
           let formattedUrl = url;
@@ -365,9 +327,6 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'google':
               searchUrl = `https://www.google.com/search?q=${encodedQuery}`;
               break;
-            case 'youtube':
-              searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
-              break;
             case 'amazon':
               searchUrl = `https://www.amazon.com/s?k=${encodedQuery}`;
               break;
@@ -396,7 +355,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
               searchUrl = `https://www.reddit.com/search/?q=${encodedQuery}`;
               break;
             case 'tiktok':
-              searchUrl = `https://www.tiktok.com/search?q=${encodedQuery}`;
+              const ttUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+              searchUrl = `https://www.tiktok.com/@${ttUsernameQuery}`;
               break;
             case 'x':
               // Remove spaces and special characters for username-like queries
@@ -407,6 +367,11 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                 // Remove spaces and special characters for Facebook username
               const fbUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
               searchUrl = `https://www.facebook.com/${fbUsernameQuery}`;
+              break;
+            case 'instagram':
+                // Remove spaces and special characters for Facebook username
+              const igUsernameQuery = query.replace(/\s+/g, '').replace(/[^a-zA-Z0-9._]/g, '');
+              searchUrl = `https://www.instagram.com/${igUsernameQuery}`;
               break;
             case 'bing':
               searchUrl = `https://www.bing.com/search?q=${encodedQuery}`;
@@ -489,10 +454,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Spotify search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === iptvDeclaration.name
                       ? `IPTV channel search widget displayed for "${(fc.args as any).query}".`
-                      : fc.name === instagramDeclaration.name
-                      ? `Instagram profile widget displayed for ${(fc.args as any).username}.`
-                      : fc.name === tiktokDeclaration.name
-                      ? `TikTok profile widget displayed for ${(fc.args as any).username}.`
+                      
                       : fc.name === openWebsiteDeclaration.name
                       ? `Opening ${ (fc.args as any).url } in a new tab.`
                       : fc.name === searchWebsiteDeclaration.name
@@ -512,7 +474,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onShowInstagram, onShowTikTok]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
