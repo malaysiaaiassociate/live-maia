@@ -22,7 +22,7 @@ import { audioContext } from "../lib/utils";
 import VolMeterWorket from "../lib/worklets/vol-meter";
 import { LiveConnectConfig } from "@google/genai";
 
-const AI_INACTIVITY_TIMEOUT = 3 * 60 * 1000; // 2 minutes in milliseconds
+const AI_INACTIVITY_TIMEOUT = 3 * 60 * 1000; // 3 minutes in milliseconds
 
 export type UseLiveAPIResults = {
   client: GenAILiveClient;
