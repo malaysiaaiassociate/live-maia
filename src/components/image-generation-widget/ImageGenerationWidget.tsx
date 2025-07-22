@@ -95,7 +95,6 @@ export const ImageGenerationWidget: React.FC<ImageGenerationWidgetProps> = ({ pr
             <div className="loading-container">
               <div className="loading-spinner"></div>
               <p>Generating your image...</p>
-              <p className="loading-subtext">This may take 10-20 seconds</p>
             </div>
           ) : imageUrl ? (
             <div className="image-display-container">
