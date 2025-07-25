@@ -369,9 +369,6 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'hotels.com':
               searchUrl = `https://ms.hotels.com/Hotel-Search?destination=${encodedQuery}`;
               break;
-            case 'agoda':
-              searchUrl = `https://www.agoda.com/en-us/search?locale=en-us&currency=MYR&realLanguageId=16&languageId=1&origin=MY&currencyId=4&currencyCode=MYR&htmlLanguage=en-us&useFullPageLogin=true&cttp=4&isRealUser=true&mode=production&cdnDomain=agoda.net&rooms=1&adults=2&children=0&priceCur=MYR&textToSearch=${encodedQuery}`;
-              break;
             case 'wikipedia':
               searchUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodedQuery}`;
               break;
