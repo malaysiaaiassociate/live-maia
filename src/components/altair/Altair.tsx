@@ -366,7 +366,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'booking.com':
               searchUrl = `https://www.booking.com/searchresults.html?ss=${encodedQuery}`;
               break;
-            case 'hotel.com':
+            case 'hotels.com':
               searchUrl = `https://ms.hotels.com/Hotel-Search?destination=${encodedQuery}`;
               break;
             case 'agoda':
