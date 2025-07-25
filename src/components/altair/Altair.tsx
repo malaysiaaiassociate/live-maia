@@ -363,10 +363,10 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'etsy':
               searchUrl = `https://www.etsy.com/search?q=${encodedQuery}`;
               break;
-            case 'booking':
+            case 'booking.com':
               searchUrl = `https://www.booking.com/searchresults.html?ss=${encodedQuery}`;
               break;
-            case 'hotel':
+            case 'hotel.com':
               searchUrl = `https://ms.hotels.com/Hotel-Search?destination=${encodedQuery}`;
               break;
             case 'agoda':
