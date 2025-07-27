@@ -24,6 +24,7 @@ interface AltairProps {
   onShowTraffic: (location: string) => void;
   onShowMap: (location: string) => void;
   onShowYouTube: (query: string) => void;
+  onNavigationRequest?: (destination: string) => void;
   onShowSpotify: (query: string) => void;
   onShowIPTV: (query: string) => void;
   onGenerateImage: (prompt: string) => void;
@@ -139,6 +140,20 @@ const iptvDeclaration: FunctionDeclaration = {
   }
 };
 
+const navigationDeclaration: FunctionDeclaration = {
+  name: "show_navigation_widget",
+  description: "Display a navigation widget with an embedded Google Maps page for a specified destination.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      destination: {
+        type: Type.STRING,
+        description: "The destination to navigate to (e.g., 'Eiffel Tower', 'Tokyo', 'Central Park').",
+      },
+    },
+    required: ["destination"],
+  },
+};
 
 
 const openWebsiteDeclaration: FunctionDeclaration = {
@@ -191,7 +206,7 @@ const imageGenerationDeclaration: FunctionDeclaration = {
 };
 
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onGenerateImage }: AltairProps) {
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -258,7 +273,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -301,6 +316,13 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`YouTube search requested for: ${query}`);
 
           onShowYouTube(query);
+        } else if (fc.name === navigationDeclaration.name) {
+          const destination = (fc.args as any).destination;
+          console.log(`Navigation requested for: ${destination}`);
+
+          if (onNavigationRequest) {
+              onNavigationRequest(destination);
+          }
         } else if (fc.name === spotifyDeclaration.name) {
           const query = (fc.args as any).query;
           console.log(`Spotify search requested for: ${query}`);
@@ -477,6 +499,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Map widget displayed for ${(fc.args as any).location}.`
                       : fc.name === youtubeDeclaration.name
                       ? `YouTube search widget displayed for "${(fc.args as any).query}".`
+                      : fc.name === navigationDeclaration.name
+                      ? `Navigation widget displayed for ${(fc.args as any).destination}.`
                       : fc.name === spotifyDeclaration.name
                       ? `Spotify search widget displayed for "${(fc.args as any).query}".`
                       : fc.name === iptvDeclaration.name
@@ -502,7 +526,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onShowSpotify, onShowIPTV, onGenerateImage]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
