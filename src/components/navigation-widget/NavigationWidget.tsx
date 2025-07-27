@@ -1,261 +1,187 @@
 
-.navigation-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
+import React, { useState, useEffect } from 'react';
+import { getCurrentLocation, LocationData } from '../../lib/location';
+import './navigation-widget.scss';
+
+interface NavigationWidgetProps {
+  destination: string;
+  onClose: () => void;
 }
 
-.navigation-widget {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border-radius: 16px;
-  width: 90vw;
-  height: 85vh;
-  max-width: 1000px;
-  max-height: 700px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-
-  &.loading, &.error {
-    height: auto;
-    min-height: 200px;
-    justify-content: center;
-    align-items: center;
-  }
+interface NavigationData {
+  destination: string;
+  mapUrl: string;
+  lastUpdated: string;
+  currentLocation?: LocationData;
 }
 
-.navigation-header {
-  background: linear-gradient(90deg, #0f3460 0%, #0e4b99 100%);
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
+const isWebView = () => {
+  const ua = navigator.userAgent || navigator.vendor || '';
+  const standalone = (window.navigator as any).standalone === true;
 
-  .navigation-title {
-    flex: 1;
-    margin-right: 20px;
-    
-    h2 {
-      margin: 0 0 4px 0;
-      color: #ffffff;
-      font-size: 1.3em;
-      font-weight: 600;
+  const isIOSWebView = /iPhone|iPod|iPad/.test(ua) && !standalone && !/Safari/.test(ua);
+  const isAndroidWebView = /\bwv\b/.test(ua) || (/Android.*Version\/[\d.]+.*Chrome/.test(ua) && !/Chrome\/\d{2,}/.test(ua));
+
+  return isIOSWebView || isAndroidWebView;
+};
+
+export const NavigationWidget: React.FC<NavigationWidgetProps> = ({ destination, onClose }) => {
+  const [navigationData, setNavigationData] = useState<NavigationData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isWebView()) {
+      setIsHidden(true);
+      return;
     }
 
-    .navigation-destination {
-      color: #b3d9ff;
-      font-size: 0.9em;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      margin-bottom: 8px;
+    const loadNavigationData = async () => {
+      if (!destination) return;
 
-      .last-updated {
-        font-size: 0.8em;
-        color: #88c8ff;
-        opacity: 0.8;
-      }
-    }
+      setLoading(true);
+      setError(null);
 
-    .open-maps-button {
-      background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9em;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-
-      &:hover {
-        background: linear-gradient(135deg, #45a049 0%, #3e8e41 100%);
-        transform: translateY(-1px);
-      }
-    }
-  }
-
-  .close-button {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: #ffffff;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-  }
-}
-
-.navigation-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  .navigation-container {
-    flex: 1;
-    position: relative;
-    
-    .navigation-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #1a1a2e;
-    }
-  }
-
-  .navigation-fallback {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: #ffffff;
-    padding: 40px;
-
-    .navigation-icon {
-      font-size: 3em;
-      margin-bottom: 16px;
-      opacity: 0.7;
-    }
-
-    p {
-      margin: 0 0 20px 0;
-      font-size: 1.1em;
-      opacity: 0.9;
-    }
-
-    .fallback-button {
-      background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: linear-gradient(135deg, #45a049 0%, #3e8e41 100%);
-        transform: translateY(-2px);
-      }
-    }
-  }
-}
-
-.location-info {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 8px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: center;
-
-  .location-accuracy {
-    color: #88c8ff;
-    font-size: 0.8em;
-    opacity: 0.8;
-  }
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #ffffff;
-  font-size: 1.1em;
-  padding: 40px;
-}
-
-.error-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #ff6b6b;
-  font-size: 1.1em;
-  padding: 40px;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  .navigation-widget {
-    width: 95vw;
-    height: 90vh;
-    max-height: 90vh;
-    border-radius: 12px;
-    margin: 5vh auto;
-  }
-
-  .navigation-backdrop {
-    padding: 0;
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  .navigation-header {
-    padding: 12px 16px;
-    
-    .navigation-title {
-      margin-right: 16px;
-      
-      h2 {
-        font-size: 1.2em;
-      }
-
-      .navigation-destination {
-        font-size: 0.85em;
-        
-        .last-updated {
-          font-size: 0.75em;
+      try {
+        // Get current location
+        let currentLocation: LocationData | undefined;
+        try {
+          currentLocation = await getCurrentLocation();
+          console.log('Current location obtained for navigation:', currentLocation);
+        } catch (locationError) {
+          console.warn('Could not get current location:', locationError);
+          // Continue without current location
         }
-      }
 
-      .open-maps-button {
-        font-size: 0.85em;
-        padding: 6px 10px;
-      }
-    }
+        // Create Google Maps embed URL
+        const encodedDestination = encodeURIComponent(destination);
+        let mapUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&q=${encodedDestination}`;
 
-    .close-button {
-      width: 36px;
-      height: 36px;
-      font-size: 20px;
+        // If we have current location, use directions instead of place
+        if (currentLocation) {
+          const origin = `${currentLocation.latitude},${currentLocation.longitude}`;
+          mapUrl = `https://www.google.com/maps/embed/v1/directions?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&origin=${origin}&destination=${encodedDestination}&mode=driving`;
+        }
+
+        setNavigationData({
+          destination: destination,
+          mapUrl: mapUrl,
+          currentLocation: currentLocation,
+          lastUpdated: new Date().toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+          })
+        });
+      } catch (err) {
+        console.error('Failed to load navigation data:', err);
+        setError('Failed to load navigation data. Please try again.');
+
+        setNavigationData({
+          destination: destination,
+          mapUrl: '',
+          lastUpdated: new Date().toLocaleTimeString()
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNavigationData();
+  }, [destination]);
+
+  const openInGoogleMaps = () => {
+    if (navigationData?.currentLocation) {
+      const origin = `${navigationData.currentLocation.latitude},${navigationData.currentLocation.longitude}`;
+      const url = `https://www.google.com/maps/dir/${origin}/${encodeURIComponent(destination)}`;
+      window.open(url, '_blank');
+    } else {
+      const url = `https://www.google.com/maps/search/${encodeURIComponent(destination)}`;
+      window.open(url, '_blank');
     }
+  };
+
+  if (isHidden) return null;
+
+  if (loading || !navigationData) {
+    return (
+      <div className="navigation-backdrop" onClick={onClose}>
+        <div className="navigation-widget loading" onClick={(e) => e.stopPropagation()}>
+          <div className="navigation-header">
+            <h2>Navigation</h2>
+            <button className="close-button" onClick={onClose}>×</button>
+          </div>
+          <div className="loading-spinner">
+            {loading ? 'Loading navigation...' : 'No navigation data available'}
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  .navigation-content .navigation-fallback {
-    padding: 20px;
-
-    .navigation-icon {
-      font-size: 2.5em;
-    }
-
-    p {
-      font-size: 1em;
-    }
+  if (error && !navigationData.mapUrl) {
+    return (
+      <div className="navigation-backdrop" onClick={onClose}>
+        <div className="navigation-widget error" onClick={(e) => e.stopPropagation()}>
+          <div className="navigation-header">
+            <h2>Navigation</h2>
+            <button className="close-button" onClick={onClose}>×</button>
+          </div>
+          <div className="error-message">{error}</div>
+        </div>
+      </div>
+    );
   }
-}
+
+  return (
+    <div className="navigation-backdrop" onClick={onClose}>
+      <div className="navigation-widget" onClick={(e) => e.stopPropagation()}>
+        <div className="navigation-header">
+          <div className="navigation-title">
+            <h2>Navigation</h2>
+            <div className="navigation-destination">
+              To: {navigationData.destination}
+              <span className="last-updated">Updated: {navigationData.lastUpdated}</span>
+            </div>
+            <button className="open-maps-button" onClick={openInGoogleMaps}>
+              Open in Google Maps
+            </button>
+          </div>
+          <button className="close-button" onClick={onClose}>×</button>
+        </div>
+
+        <div className="navigation-content">
+          {navigationData.mapUrl ? (
+            <div className="navigation-container">
+              <iframe
+                src={navigationData.mapUrl}
+                className="navigation-iframe"
+                allowFullScreen
+                loading="lazy"
+                title={`Navigation to ${navigationData.destination}`}
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          ) : (
+            <div className="navigation-fallback">
+              <div className="navigation-icon">🗺️</div>
+              <p>Navigation to {navigationData.destination} is currently unavailable</p>
+              <button className="fallback-button" onClick={openInGoogleMaps}>
+                Open in Google Maps
+              </button>
+            </div>
+          )}
+        </div>
+
+        {navigationData.currentLocation && (
+          <div className="location-info">
+            <span className="location-accuracy">
+              Location accuracy: {Math.round(navigationData.currentLocation.accuracy)}m
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
