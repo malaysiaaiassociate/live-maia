@@ -25,6 +25,7 @@ import { WeatherWidget } from "./components/weather-widget/WeatherWidget";
 import { TrafficWidget } from "./components/traffic-widget/TrafficWidget";
 import { MapWidget } from "./components/map-widget/MapWidget";
 import { YouTubeWidget } from "./components/youtube-widget/YouTubeWidget";
+import { NavigationWidget } from './components/navigation-widget/NavigationWidget';
 import { SpotifyWidget } from "./components/spotify-widget/SpotifyWidget";
 import { IPTVWidget } from "./components/iptv-widget/IPTVWidget";
 import { ImageGenerationWidget } from "./components/image-generation-widget/ImageGenerationWidget";
@@ -68,7 +69,10 @@ function App() {
   // image generation widget state
   const [showImageWidget, setShowImageWidget] = useState<boolean>(false);
   const [imagePrompt, setImagePrompt] = useState<string>("");
-   
+    // navigation widget state
+  const [showNavigationWidget, setShowNavigationWidget] = useState<boolean>(false);
+  const [navigationDestination, setNavigationDestination] = useState<string>("");
+
 
   return (
     <div className="App">
@@ -95,6 +99,10 @@ function App() {
                   setYouTubeQuery(query);
                   setShowYouTubeWidget(true);
                 }}
+                onNavigationRequest={(destination: string) => {
+                  setNavigationDestination(destination);
+                  setShowNavigationWidget(true);
+                }}
                 onShowSpotify={(query: string) => {
                   setSpotifyQuery(query);
                   setShowSpotifyWidget(true);
@@ -107,7 +115,7 @@ function App() {
                   setImagePrompt(prompt);
                   setShowImageWidget(true);
                 }}
-                
+
               />
               <video
                 className={cn("stream", {
@@ -154,7 +162,20 @@ function App() {
         {showYouTubeWidget && (
           <YouTubeWidget 
             searchQuery={youTubeQuery}
-            onClose={() => setShowYouTubeWidget(false)}
+            onClose={() => {
+              setShowYouTubeWidget(false);
+              setYouTubeQuery('');
+            }}
+          />
+        )}
+
+        {showNavigationWidget && (
+          <NavigationWidget 
+            destination={navigationDestination}
+            onClose={() => {
+              setShowNavigationWidget(false);
+              setNavigationDestination('');
+            }}
           />
         )}
 
@@ -182,7 +203,7 @@ function App() {
           />
         )}
 
-        
+
       </LiveAPIProvider>
     </div>
   );
