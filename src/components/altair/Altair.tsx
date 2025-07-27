@@ -391,6 +391,9 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             case 'hotels.com':
               searchUrl = `https://ms.hotels.com/Hotel-Search?destination=${encodedQuery}`;
               break;
+            case 'airbnb':
+              searchUrl = `https://www.airbnb.com/s/${encodedQuery}/homes?refinement_paths%5B%1D=%2Fhomes&date_picker_type=calendar&source=structured_search_input_header&search_type=search_query`;
+              break;
             case 'wikipedia':
               searchUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodedQuery}`;
               break;
