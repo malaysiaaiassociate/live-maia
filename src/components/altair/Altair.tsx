@@ -1,3 +1,4 @@
+
 /**
  * Copyright 2024 Google LLC
  *
@@ -155,7 +156,6 @@ const navigationDeclaration: FunctionDeclaration = {
   },
 };
 
-
 const openWebsiteDeclaration: FunctionDeclaration = {
   name: "open_website",
   description: "Open any website in a new browser tab when user asks to open, visit, or go to a website",
@@ -205,6 +205,20 @@ const imageGenerationDeclaration: FunctionDeclaration = {
   }
 };
 
+const movieStreamingDeclaration: FunctionDeclaration = {
+  name: "watch_movie",
+  description: "Open a movie streaming website in a new browser tab to watch a specific movie.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      movie_title: {
+        type: Type.STRING,
+        description: "The title of the movie to watch (e.g., 'Avengers Endgame', 'Keluang Man').",
+      },
+    },
+    required: ["movie_title"],
+  },
+};
 
 function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
@@ -273,7 +287,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -333,7 +347,6 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           console.log(`IPTV search requested: ${query}`);
 
           onShowIPTV(query);
-
         } else if (fc.name === openWebsiteDeclaration.name) {
           const url = (fc.args as any).url;
           let formattedUrl = url;
@@ -483,6 +496,25 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
 
           // Trigger the image generation widget
           onGenerateImage(prompt);
+        } else if (fc.name === movieStreamingDeclaration.name) {
+          const movieTitle = (fc.args as any).movie_title;
+          // Clean up the movie title by removing common suffixes and formatting
+          const cleanedTitle = movieTitle
+            .toLowerCase()
+            .replace(/\s+(movie|film)$/i, '') // Remove "movie" or "film" at the end
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/[^a-z0-9\-]/g, ''); // Remove special characters except hyphens
+          
+          const movieUrl = `https://ww67.pencurimoviesubmalay.makeup/movies/${cleanedTitle}`;
+
+          try {
+            window.open(movieUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened movie: ${movieTitle}`);
+          } catch (error) {
+            console.error(`Failed to open movie: ${movieTitle}`, error);
+          }
+
+          console.log(`Opening movie requested: ${movieTitle}`);
         }
       });
 
@@ -514,6 +546,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Searching for "${(fc.args as any).query}" on ${(fc.args as any).website} and opening results in a new tab.`
                       : fc.name === imageGenerationDeclaration.name
                       ? `Image generation widget displayed for prompt: "${(fc.args as any).prompt}". I have already generated and displayed the image you requested.`
+                      : fc.name === movieStreamingDeclaration.name
+                      ? `Opening movie ${ (fc.args as any).movie_title } in a new tab.`
                       : "Function executed successfully"
                   } 
                 },
