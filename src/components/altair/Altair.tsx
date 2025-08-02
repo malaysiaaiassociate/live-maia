@@ -220,6 +220,21 @@ const movieStreamingDeclaration: FunctionDeclaration = {
   },
 };
 
+const tvSeriesDeclaration: FunctionDeclaration = {
+  name: "watch_tv_series",
+  description: "Open a TV series streaming website in a new browser tab to watch a specific TV show or series.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      series_title: {
+        type: Type.STRING,
+        description: "The title of the TV series to watch (e.g., 'Projek High Council', 'Game of Thrones', 'Breaking Bad').",
+      },
+    },
+    required: ["series_title"],
+  },
+};
+
 function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -287,7 +302,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -515,6 +530,25 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           }
 
           console.log(`Opening movie requested: ${movieTitle}`);
+        } else if (fc.name === tvSeriesDeclaration.name) {
+          const seriesTitle = (fc.args as any).series_title;
+          // Clean up the series title by removing common suffixes and formatting
+          const cleanedTitle = seriesTitle
+            .toLowerCase()
+            .replace(/\s+(series|tv\s*show|season\s*\d+)$/i, '') // Remove "series", "tv show", or "season X" at the end
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/[^a-z0-9\-]/g, ''); // Remove special characters except hyphens
+          
+          const seriesUrl = `https://ww67.pencurimoviesubmalay.makeup/tvshows/${cleanedTitle}`;
+
+          try {
+            window.open(seriesUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened TV series: ${seriesTitle}`);
+          } catch (error) {
+            console.error(`Failed to open TV series: ${seriesTitle}`, error);
+          }
+
+          console.log(`Opening TV series requested: ${seriesTitle}`);
         }
       });
 
@@ -548,6 +582,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Image generation widget displayed for prompt: "${(fc.args as any).prompt}". I have already generated and displayed the image you requested.`
                       : fc.name === movieStreamingDeclaration.name
                       ? `Opening movie ${ (fc.args as any).movie_title } in a new tab.`
+                      : fc.name === tvSeriesDeclaration.name
+                      ? `Opening TV series ${ (fc.args as any).series_title } in a new tab.`
                       : "Function executed successfully"
                   } 
                 },
