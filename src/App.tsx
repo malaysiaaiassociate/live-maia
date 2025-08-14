@@ -29,6 +29,7 @@ import { NavigationWidget } from './components/navigation-widget/NavigationWidge
 import { SpotifyWidget } from "./components/spotify-widget/SpotifyWidget";
 import { IPTVWidget } from "./components/iptv-widget/IPTVWidget";
 import { ImageGenerationWidget } from "./components/image-generation-widget/ImageGenerationWidget";
+import { MaiaSocialWidget } from "./components/maia-social-widget/MaiaSocialWidget";
 import cn from "classnames";
 import { LiveClientOptions } from "./types";
 
@@ -69,6 +70,8 @@ function App() {
   // image generation widget state
   const [showImageWidget, setShowImageWidget] = useState<boolean>(false);
   const [imagePrompt, setImagePrompt] = useState<string>("");
+  // maia social widget state
+  const [showMaiaSocialWidget, setShowMaiaSocialWidget] = useState<boolean>(false);
     // navigation widget state
   const [showNavigationWidget, setShowNavigationWidget] = useState<boolean>(false);
   const [navigationDestination, setNavigationDestination] = useState<string>("");
@@ -114,6 +117,9 @@ function App() {
                 onGenerateImage={(prompt: string) => {
                   setImagePrompt(prompt);
                   setShowImageWidget(true);
+                }}
+                onShowMaiaSocial={() => {
+                  setShowMaiaSocialWidget(true);
                 }}
 
               />
@@ -200,6 +206,12 @@ function App() {
               setShowImageWidget(false);
               setImagePrompt('');
             }}
+          />
+        )}
+
+        {showMaiaSocialWidget && (
+          <MaiaSocialWidget 
+            onClose={() => setShowMaiaSocialWidget(false)}
           />
         )}
 
