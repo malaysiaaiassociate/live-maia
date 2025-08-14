@@ -29,6 +29,7 @@ interface AltairProps {
   onShowSpotify: (query: string) => void;
   onShowIPTV: (query: string) => void;
   onGenerateImage: (prompt: string) => void;
+  onShowMaiaSocial: () => void;
 }
 
 const altairDeclaration: FunctionDeclaration = {
@@ -235,7 +236,17 @@ const tvSeriesDeclaration: FunctionDeclaration = {
   },
 };
 
-function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage }: AltairProps) {
+const maiaSocialDeclaration: FunctionDeclaration = {
+  name: "open_maia_social",
+  description: "Open MAiA Social platform when user asks to open MAiA Social, visit MAiA Social, or access the MAiA Social platform.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: [],
+  },
+};
+
+function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage, onShowMaiaSocial }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
   const [location, setLocation] = useState<LocationData | null>(null);
@@ -302,7 +313,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration, maiaSocialDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -549,6 +560,9 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           }
 
           console.log(`Opening TV series requested: ${seriesTitle}`);
+        } else if (fc.name === maiaSocialDeclaration.name) {
+          console.log(`MAiA Social widget requested`);
+          onShowMaiaSocial();
         }
       });
 
@@ -584,6 +598,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Opening movie ${ (fc.args as any).movie_title } in a new tab.`
                       : fc.name === tvSeriesDeclaration.name
                       ? `Opening TV series ${ (fc.args as any).series_title } in a new tab.`
+                      : fc.name === maiaSocialDeclaration.name
+                      ? `MAiA Social platform opened in full screen widget.`
                       : "Function executed successfully"
                   } 
                 },
@@ -599,7 +615,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
     return () => {
       client.off("toolcall", onToolCall);
     };
-  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage]);
+  }, [client, onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage, onShowMaiaSocial]);
 
   const embedRef = useRef<HTMLDivElement>(null);
 
