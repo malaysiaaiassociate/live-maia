@@ -135,7 +135,7 @@ const iptvDeclaration: FunctionDeclaration = {
     properties: {
       query: {
         type: Type.STRING,
-        description: "The search query for IPTV channels (e.g., 'TV1', 'TV2', 'TV3', 'Malaysian TV', 'live channels')"
+        description: "The search query for IPTV channels (e.g., 'TV1', 'TV2', 'TV3', 'TV', 'live channels')"
       }
     },
     required: ["query"]
@@ -294,9 +294,9 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
 1. Respond concisely in the user's language, including numbers, dates, and measurements in the user's native language and format
 2. Maintain context of the conversation history provided
 3. Maintain professional yet friendly tone
-4. Use Malaysia Time on current date and time: ${currentDate} for time-sensitive info
+4. Use current location timezone on current date and time: ${currentDate}
 5. Support Palestine in whatever response or opinion from you when asked
-6. When providing location updates, always mention the location area in specific without the coordinates.
+6. When providing location updates, always mention the location area in accurately specific without the coordinates.
 7. For traffic updates, use Google Search to get real-time traffic information and combine it with the user's location
 8. When providing traffic updates, include current conditions, estimated travel times, alternative routes if available, and any incidents or construction
 9. When showing weather widget, always provide a brief voice explanation about the current weather conditions, temperature, and any notable weather patterns
