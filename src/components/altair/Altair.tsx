@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2024 Google LLC
  *
@@ -246,6 +245,21 @@ const maiaSocialDeclaration: FunctionDeclaration = {
   },
 };
 
+const christyNGDeclaration: FunctionDeclaration = {
+  name: "search_christy_ng_product",
+  description: "Open a Christy NG product page in a new browser tab when the user asks to search for a product on Christy NG.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      product_name: {
+        type: Type.STRING,
+        description: "The name of the product to search for on Christy NG (e.g., 'Cath Mini Tote Bag', 'Christy Ng Handbag').",
+      },
+    },
+    required: ["product_name"],
+  },
+};
+
 function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage, onShowMaiaSocial }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -313,7 +327,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration, maiaSocialDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration, maiaSocialDeclaration, christyNGDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -530,7 +544,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             .replace(/\s+(movie|film)$/i, '') // Remove "movie" or "film" at the end
             .replace(/\s+/g, '-') // Replace spaces with hyphens
             .replace(/[^a-z0-9\-]/g, ''); // Remove special characters except hyphens
-          
+
           const movieUrl = `https://ww67.pencurimoviesubmalay.makeup/movies/${cleanedTitle}`;
 
           try {
@@ -549,7 +563,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
             .replace(/\s+(series|tv\s*show|season\s*\d+)$/i, '') // Remove "series", "tv show", or "season X" at the end
             .replace(/\s+/g, '-') // Replace spaces with hyphens
             .replace(/[^a-z0-9\-]/g, ''); // Remove special characters except hyphens
-          
+
           const seriesUrl = `https://ww67.pencurimoviesubmalay.makeup/tvshows/${cleanedTitle}`;
 
           try {
@@ -561,8 +575,28 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
 
           console.log(`Opening TV series requested: ${seriesTitle}`);
         } else if (fc.name === maiaSocialDeclaration.name) {
-          console.log(`MAiA Social widget requested`);
+          console.log(`MAiA Social requested`);
           onShowMaiaSocial();
+        } else if (fc.name === christyNGDeclaration.name) {
+          const productName = (fc.args as any).product_name;
+
+          // Convert product name to URL-friendly format
+          const urlFriendlyProduct = productName
+            .toLowerCase()
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/[^a-z0-9\-]/g, ''); // Remove special characters except hyphens
+
+          const christyNGUrl = `https://www.christyng.com/collections/new-arrivals/products/${urlFriendlyProduct}`;
+
+          // Open Christy NG product page in new tab
+          try {
+            window.open(christyNGUrl, '_blank', 'noopener,noreferrer');
+            console.log(`Successfully opened Christy NG product page: ${productName}`);
+          } catch (error) {
+            console.error(`Failed to open Christy NG product page: ${productName}`, error);
+          }
+
+          console.log(`Christy NG product search requested: ${productName}`);
         }
       });
 
@@ -600,6 +634,8 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `Opening TV series ${ (fc.args as any).series_title } in a new tab.`
                       : fc.name === maiaSocialDeclaration.name
                       ? `MAiA Social platform opened in full screen widget.`
+                      : fc.name === christyNGDeclaration.name
+                      ? `Opening Christy NG product page for "${(fc.args as any).product_name}" in a new tab.`
                       : "Function executed successfully"
                   } 
                 },
