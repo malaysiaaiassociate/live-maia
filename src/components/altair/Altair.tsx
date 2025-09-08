@@ -260,6 +260,16 @@ const christyNGDeclaration: FunctionDeclaration = {
   },
 };
 
+const currentLocationMapDeclaration: FunctionDeclaration = {
+  name: "show_current_location_map",
+  description: "Display a map widget showing the user's current GPS location when they ask to see their current location on the map",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {},
+    required: [],
+  },
+};
+
 function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTube, onNavigationRequest, onShowSpotify, onShowIPTV, onGenerateImage, onShowMaiaSocial }: AltairProps) {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig, setModel } = useLiveAPIContext();
@@ -327,7 +337,7 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
       },
       tools: [
           { googleSearch: {} },
-          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration, maiaSocialDeclaration, christyNGDeclaration] },
+          { functionDeclarations: [altairDeclaration, trafficDeclaration, weatherDeclaration, mapDeclaration, youtubeDeclaration, navigationDeclaration, spotifyDeclaration, iptvDeclaration, openWebsiteDeclaration, searchWebsiteDeclaration, imageGenerationDeclaration, movieStreamingDeclaration, tvSeriesDeclaration, maiaSocialDeclaration, christyNGDeclaration, currentLocationMapDeclaration] },
         ],
     });
   }, [setConfig, setModel, location, locationError]);
@@ -597,6 +607,28 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
           }
 
           console.log(`Christy NG product search requested: ${productName}`);
+        } else if (fc.name === currentLocationMapDeclaration.name) {
+          console.log(`Current location map requested`);
+
+          if (location) {
+            // Use coordinates as the location string for current location
+            const currentLocationString = `${location.latitude},${location.longitude}`;
+            console.log('Showing map with current location:', currentLocationString);
+            onShowMap(currentLocationString);
+          } else {
+            // Try to get location again if not available
+            getCurrentLocation()
+              .then((locationData) => {
+                const currentLocationString = `${locationData.latitude},${locationData.longitude}`;
+                console.log('Got fresh location for map:', currentLocationString);
+                onShowMap(currentLocationString);
+              })
+              .catch((error) => {
+                console.error('Cannot get current location for map:', error);
+                // Show error or fallback behavior
+                onShowMap('current location unavailable');
+              });
+          }
         }
       });
 
@@ -636,6 +668,10 @@ function AltairComponent({ onShowWeather, onShowTraffic, onShowMap, onShowYouTub
                       ? `MAiA Social platform opened in full screen widget.`
                       : fc.name === christyNGDeclaration.name
                       ? `Opening Christy NG product page for "${(fc.args as any).product_name}" in a new tab.`
+                      : fc.name === currentLocationMapDeclaration.name
+                      ? location 
+                        ? `Map widget displayed showing your current location at coordinates ${location.latitude}, ${location.longitude}.`
+                        : `Attempting to retrieve your current location to display on the map...`
                       : "Function executed successfully"
                   } 
                 },
