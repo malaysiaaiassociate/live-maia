@@ -61,26 +61,54 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
       });
 
       const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: '${location}' }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          map.setCenter(results[0].geometry.location);
-          const marker = new google.maps.Marker({
-            position: results[0].geometry.location,
-            map: map,
-            title: '${location}'
-          });
+      // Check if location is coordinates (lat,lng format)
+      const coordMatch = '${location}'.match(/^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/);
+      
+      if (coordMatch) {
+        // Handle coordinate-based location (current location)
+        const lat = parseFloat(coordMatch[1]);
+        const lng = parseFloat(coordMatch[2]);
+        const position = { lat: lat, lng: lng };
+        
+        map.setCenter(position);
+        const marker = new google.maps.Marker({
+          position: position,
+          map: map,
+          title: 'Your Current Location'
+        });
 
-          const infoWindow = new google.maps.InfoWindow({
-            content: '<div style="padding: 5px;"><strong>${location}</strong></div>'
-          });
+        const infoWindow = new google.maps.InfoWindow({
+          content: '<div style="padding: 5px;"><strong>Your Current Location</strong><br>Lat: ' + lat.toFixed(6) + '<br>Lng: ' + lng.toFixed(6) + '</div>'
+        });
 
-          marker.addListener('click', () => {
-            infoWindow.open(map, marker);
-          });
-
+        marker.addListener('click', () => {
           infoWindow.open(map, marker);
-        }
-      });
+        });
+
+        infoWindow.open(map, marker);
+      } else {
+        // Handle address-based location (regular location search)
+        geocoder.geocode({ address: '${location}' }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            map.setCenter(results[0].geometry.location);
+            const marker = new google.maps.Marker({
+              position: results[0].geometry.location,
+              map: map,
+              title: '${location}'
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+              content: '<div style="padding: 5px;"><strong>${location}</strong></div>'
+            });
+
+            marker.addListener('click', () => {
+              infoWindow.open(map, marker);
+            });
+
+            infoWindow.open(map, marker);
+          }
+        });
+      }
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'demo-key'}&callback=initMap&libraries=geometry"></script>
@@ -89,8 +117,12 @@ export const MapWidget: React.FC<MapWidgetProps> = ({ location, onClose }) => {
 
         const mapUrl = `data:text/html;charset=utf-8,${encodeURIComponent(mapHtml)}`;
 
+        // Check if this is a current location (coordinates format)
+        const coordMatch = location.match(/^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/);
+        const displayLocation = coordMatch ? 'Your Current Location' : location;
+
         setMapData({
-          location: location,
+          location: displayLocation,
           mapUrl: mapUrl,
           lastUpdated: new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
